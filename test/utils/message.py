@@ -30,9 +30,11 @@ from pytezos.michelson.forge import (
     forge_int16,
     forge_int32,
     forge_nat,
+    forge_bool,
+    forge_array,
     # forge_public_key, # overrode until BLS key included
 )
-from pytezos.operation.content import ContentMixin
+from pytezos.operation.content import ContentMixin, format_mutez
 from pytezos.operation.forge import forge_tag
 # from pytezos.operation.group import OperationGroup
 from pytezos.rpc.kind import operation_tags
@@ -114,6 +116,7 @@ class Default:
     ENTRYPOINT: str              = 'default'
     OPERATIONS_HASH: str         = "LLoZKi1iMzbeJrfrGWPFYmkLebcsha6vGskQ4rAXt2uMwQtBfRcjL"
     TIMESTAMP: str               = "1970-01-01T00:00:00-00:00"
+    BLS_SIGNATURE: str           = "BLsig4XnPRJQAkxE1dokc4AwLzmdC3ukRgzW8tUc53s7BkVH48eQALvMMM7KLCFyKfQxMadkoddeUkFWig7cREthNoZVLKMEjM16Ukz3x4dHBpLv5QfUWzqnD8s8TA1R5Eom1b8b4iETeJ"
 
     class Micheline:
         """Class holding Micheline default values."""
@@ -121,6 +124,32 @@ class Default:
 
 class OperationBuilder(ContentMixin):
     """Extends and fix pytezos.operation.content.ContentMixin."""
+
+    def reveal(
+            self,
+            public_key: str = '',
+            proof: Optional[str] = None,
+            source: str = '',
+            counter: int = 0,
+            fee: int = 0,
+            gas_limit: int = 0,
+            storage_limit: int = 0):
+        """Build a Tezos reveal."""
+        # Same as Pytezos but with a proof field
+        content = {
+            'kind': 'reveal',
+            'source': source,
+            'fee': format_mutez(fee),
+            'counter': str(counter),
+            'gas_limit': str(gas_limit),
+            'storage_limit': str(storage_limit),
+            'public_key': public_key,
+        }
+
+        if proof is not None:
+            content['proof'] = proof
+
+        return self.operation(content)
 
     def preattestation(
             self,
@@ -204,6 +233,11 @@ class OperationForge:
         res += forge_nat(int(content['gas_limit']))
         res += forge_nat(int(content['storage_limit']))
         res += forge_public_key(content['public_key'])
+        if content.get('proof'):
+            res += forge_bool(True)
+            res += forge_array(forge_base58(content['proof']))
+        else:
+            res += forge_bool(False)
         return res
 
     @staticmethod
@@ -301,17 +335,21 @@ class Reveal(ManagerOperation):
     """Class representing a tezos reveal."""
 
     public_key: str
+    proof: Optional[str]
 
     def __init__(self,
                  public_key: str = Default.ED25519_PUBLIC_KEY,
+                 proof: Optional[str] = None,
                  *args, **kwargs):
         self.public_key = public_key
+        self.proof = proof
         ManagerOperation.__init__(self, *args, **kwargs)
 
     def forge(self) -> bytes:
         return OperationForge.reveal(
             self.reveal(
                 self.public_key,
+                self.proof,
                 self.source,
                 self.counter,
                 self.fee,
