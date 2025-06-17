@@ -245,6 +245,17 @@ end:
         (const type *) &(state->subparser_state.nexttype.body);                                  \
     })
 
+// Parse a uint32_t size
+#define PARSE_SIZE                                                        \
+    ({                                                                    \
+        const raw_size *_raw_size = NEXT_TYPE(raw_size);                  \
+        uint32_t _computed_size = 0;                                      \
+        for (uint8_t i = 0; i < sizeof(_raw_size->value); i++) {          \
+            _computed_size = (_computed_size << 8) | _raw_size->value[i]; \
+        }                                                                 \
+        _computed_size;                                                   \
+    })
+
 // End of subparsers.
 
 /**
@@ -434,8 +445,39 @@ static inline tz_parser_result parse_byte(uint8_t byte,
                                      klen) == 0);
 
                 out->has_reveal = true;
+            }
 
+            OP_STEP
+
+            {
+                // Read Proof
+                bool reveal_proof = NEXT_BYTE != 0u;
+                if (!reveal_proof) {
+                    JMP_TO_TOP
+                }
+
+                // Proof only supported for BLS keys
+#ifdef TARGET_NANOS
+                PARSER_FAIL();
+#else
+                PARSER_ASSERT(out->signing.signature_type == SIGNATURE_TYPE_BLS12_381);
+            }
+
+            OP_STEP
+
+            {
+                // Parse size of the proof: the proof must be a BLS signature
+                uint32_t size = PARSE_SIZE;
+                PARSER_ASSERT(size == sizeof(struct bls_signature));
+            }
+
+            OP_STEP
+
+            {
+                // Parse and ignore the proof
+                NEXT_TYPE(struct bls_signature);
                 JMP_TO_TOP;
+#endif
             }
 
         case STEP_AFTER_MANAGER_FIELDS:  // Anything but a reveal
