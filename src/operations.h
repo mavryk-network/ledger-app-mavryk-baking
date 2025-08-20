@@ -32,14 +32,6 @@
 #include "types.h"
 
 /**
- * @brief Standard 4 bytes size
- *
- */
-typedef struct {
-    uint8_t value[4];  ///< value of the size
-} __attribute__((packed)) raw_size;
-
-/**
  * @brief Wire format that gets parsed into `signature_type`
  *
  */
@@ -111,8 +103,6 @@ struct nexttype_subparser_state {
 
     /// union of all wire structure
     union {
-        raw_size size;  ///< wire size
-
         raw_tezos_header_signature_type_t sigtype;  ///< wire signature_type
 
         struct operation_group_header ogh;  ///< wire operation group header

@@ -245,17 +245,6 @@ end:
         (const type *) &(state->subparser_state.nexttype.body);                                  \
     })
 
-// Parse a uint32_t size
-#define PARSE_SIZE                                                        \
-    ({                                                                    \
-        const raw_size *_raw_size = NEXT_TYPE(raw_size);                  \
-        uint32_t _computed_size = 0;                                      \
-        for (uint8_t i = 0; i < sizeof(_raw_size->value); i++) {          \
-            _computed_size = (_computed_size << 8) | _raw_size->value[i]; \
-        }                                                                 \
-        _computed_size;                                                   \
-    })
-
 // End of subparsers.
 
 /**
