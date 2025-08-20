@@ -3,4 +3,4 @@ bip32
 GitPython
 secp256k1
 pytezos==3.13.5
-ragger==1.24.0
+ragger[speculos,ledgerwallet]==1.39.0
