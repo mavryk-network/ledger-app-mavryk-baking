@@ -77,16 +77,6 @@ union public_key {
 #endif
 } __attribute__((packed));
 
-#ifndef TARGET_NANOS
-/**
- * @brief Wire representation of bls signature
- *
- */
-struct bls_signature {
-    uint8_t value[96];  ///< raw BLS signature
-} __attribute__((packed));
-#endif
-
 /**
  * @brief Wire representation of delegation
  *
@@ -133,10 +123,6 @@ struct nexttype_subparser_state {
 
         // Required to read Reveal public key
         union public_key pk;  ///< wire public key
-
-#ifndef TARGET_NANOS
-        struct bls_signature bls_s;  ///< wire BLS signature
-#endif
 
         uint8_t raw[1];  ///< raw array to fill the body
     } body;

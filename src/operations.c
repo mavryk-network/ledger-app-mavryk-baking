@@ -457,27 +457,7 @@ static inline tz_parser_result parse_byte(uint8_t byte,
                 }
 
                 // Proof only supported for BLS keys
-#ifdef TARGET_NANOS
                 PARSER_FAIL();
-#else
-                PARSER_ASSERT(out->signing.signature_type == SIGNATURE_TYPE_BLS12_381);
-            }
-
-            OP_STEP
-
-            {
-                // Parse size of the proof: the proof must be a BLS signature
-                uint32_t size = PARSE_SIZE;
-                PARSER_ASSERT(size == sizeof(struct bls_signature));
-            }
-
-            OP_STEP
-
-            {
-                // Parse and ignore the proof
-                NEXT_TYPE(struct bls_signature);
-                JMP_TO_TOP;
-#endif
             }
 
         case STEP_AFTER_MANAGER_FIELDS:  // Anything but a reveal

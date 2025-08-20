@@ -1313,8 +1313,8 @@ def test_sign_reveal(
         test_hwm=Hwm(0, 0)
     )
 
-    proof = Default.BLS_SIGNATURE if account.sig_scheme == SigScheme.BLS \
-        else None
+    # Proof only supported for BLS keys
+    proof = None
 
     reveal = Reveal(
         public_key=account.public_key,
