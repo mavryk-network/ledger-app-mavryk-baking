@@ -32,6 +32,14 @@
 #include "types.h"
 
 /**
+ * @brief Standard 4 bytes size
+ *
+ */
+typedef struct {
+    uint8_t value[4];  ///< value of the size
+} __attribute__((packed)) raw_size;
+
+/**
  * @brief Wire format that gets parsed into `signature_type`
  *
  */
@@ -69,6 +77,16 @@ union public_key {
 #endif
 } __attribute__((packed));
 
+#ifndef TARGET_NANOS
+/**
+ * @brief Wire representation of bls signature
+ *
+ */
+struct bls_signature {
+    uint8_t value[96];  ///< raw BLS signature
+} __attribute__((packed));
+#endif
+
 /**
  * @brief Wire representation of delegation
  *
@@ -103,6 +121,8 @@ struct nexttype_subparser_state {
 
     /// union of all wire structure
     union {
+        raw_size size;  ///< wire size
+
         raw_tezos_header_signature_type_t sigtype;  ///< wire signature_type
 
         struct operation_group_header ogh;  ///< wire operation group header
@@ -113,6 +133,10 @@ struct nexttype_subparser_state {
 
         // Required to read Reveal public key
         union public_key pk;  ///< wire public key
+
+#ifndef TARGET_NANOS
+        struct bls_signature bls_s;  ///< wire BLS signature
+#endif
 
         uint8_t raw[1];  ///< raw array to fill the body
     } body;
