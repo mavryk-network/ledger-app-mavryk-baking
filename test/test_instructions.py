@@ -22,14 +22,12 @@ import hashlib
 import hmac
 import time
 
-from functools import wraps
 import pytest
-from conftest import skip_nanos_bls
 
+from ledgered.devices import Device, DeviceType
 from ragger.backend import BackendInterface
-from ragger.firmware import Firmware
 from utils.client import TezosClient, Version, Hwm, StatusCode
-from utils.account import Account, PublicKey, SigScheme
+from utils.account import Account, PublicKey
 from utils.helper import get_current_commit
 from utils.message import (
     Message,
@@ -59,11 +57,10 @@ from common import (
     ZEBRA_ACCOUNTS,
 )
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", [None, *ACCOUNTS])
 def test_review_home(account: Optional[Account],
                      backend: BackendInterface,
-                     firmware: Firmware,
+                     device: Device,
                      tezos_navigator: TezosNavigator) -> None:
     """Test the display of the home/info pages."""
     snap_path = \
@@ -82,14 +79,14 @@ def test_review_home(account: Optional[Account],
             test_hwm
         )
 
-    if firmware.is_nano:
+    if device.is_nano:
         tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
         tezos_navigator.right()
         tezos_navigator.assert_screen(NanoFixedScreen.HOME_VERSION)
         tezos_navigator.right()
         tezos_navigator.assert_screen("chain_id", snap_path)
         tezos_navigator.right()
-        if account is not None and firmware.device == "nanos":
+        if account is not None and device.type == DeviceType.NANOS:
             for i in range(1, account.nanos_screens + 1):
                 tezos_navigator.assert_screen("public_key_hash_" + str(i), snap_path)
                 tezos_navigator.right()
@@ -110,7 +107,7 @@ def test_review_home(account: Optional[Account],
         tezos_navigator.left()
         tezos_navigator.assert_screen("high_watermark", snap_path)
         tezos_navigator.left()
-        if account is not None and firmware.device == "nanos":
+        if account is not None and device.type == DeviceType.NANOS:
             for i in reversed(range(1, account.nanos_screens + 1)):
                 tezos_navigator.assert_screen("public_key_hash_" + str(i), snap_path)
                 tezos_navigator.left()
@@ -161,10 +158,10 @@ def test_review_home(account: Optional[Account],
         tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_ENABLED)
         tezos_navigator.settings.next()
         backend.wait_for_screen_change()
-        if tezos_navigator.firmware == Firmware.STAX:
+        if device.type == DeviceType.STAX:
             # chain_id + pkh + hwm
             tezos_navigator.assert_screen("app_context", snap_path)
-        elif tezos_navigator.firmware == Firmware.FLEX:
+        elif device.type == DeviceType.FLEX:
             # chain_id + pkh
             tezos_navigator.assert_screen("app_context_1", snap_path)
             tezos_navigator.settings.next()
@@ -176,10 +173,10 @@ def test_review_home(account: Optional[Account],
         tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION)
         tezos_navigator.settings.previous()
         backend.wait_for_screen_change()
-        if tezos_navigator.firmware == Firmware.STAX:
+        if device.type == DeviceType.STAX:
             # chain_id + pkh + hwm
             tezos_navigator.assert_screen("app_context", snap_path)
-        elif tezos_navigator.firmware == Firmware.FLEX:
+        elif device.type == DeviceType.FLEX:
             # hwm + version
             tezos_navigator.assert_screen("app_context_2", snap_path)
             tezos_navigator.settings.previous()
@@ -200,10 +197,10 @@ def test_review_home(account: Optional[Account],
         tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_DISABLED)
         tezos_navigator.settings.next()
         backend.wait_for_screen_change()
-        if tezos_navigator.firmware == Firmware.STAX:
+        if device.type == DeviceType.STAX:
             # chain_id + pkh + hwm
             tezos_navigator.assert_screen("app_context", snap_path)
-        elif tezos_navigator.firmware == Firmware.FLEX:
+        elif device.type == DeviceType.FLEX:
             # chain_id + pkh
             tezos_navigator.assert_screen("app_context_1", snap_path)
             tezos_navigator.settings.next()
@@ -221,10 +218,10 @@ def test_review_home(account: Optional[Account],
         tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION)
         tezos_navigator.settings.previous()
         backend.wait_for_screen_change()
-        if tezos_navigator.firmware == Firmware.STAX:
+        if device.type == DeviceType.STAX:
             # chain_id + pkh + hwm
             tezos_navigator.assert_screen("app_context", snap_path)
-        elif tezos_navigator.firmware == Firmware.FLEX:
+        elif device.type == DeviceType.FLEX:
             # hwm + version
             tezos_navigator.assert_screen("app_context_2", snap_path)
             tezos_navigator.settings.previous()
@@ -242,12 +239,12 @@ def test_review_home(account: Optional[Account],
         tezos_navigator.assert_screen(TouchFixedScreen.HOME)
 
 
-def test_low_cost_screensaver(firmware: Firmware,
+def test_low_cost_screensaver(device: Device,
                               backend: BackendInterface,
                               tezos_navigator: TezosNavigator) -> None:
     """Test if the low-cost screensaver work as intended."""
 
-    if firmware.name != "nanos":
+    if device.type != DeviceType.NANOS:
         pytest.skip("Only on nanos devices")
 
     all_click = [
@@ -264,13 +261,13 @@ def test_low_cost_screensaver(firmware: Firmware,
         backend.wait_for_screen_change()
         tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
-def test_automatic_low_cost_screensaver(firmware: Firmware,
+def test_automatic_low_cost_screensaver(device: Device,
                                         backend: BackendInterface,
                                         client: TezosClient,
                                         tezos_navigator: TezosNavigator) -> None:
     """Test the low-cost screensaver activate at sign."""
 
-    if firmware.name != "nanos":
+    if device.type != DeviceType.NANOS:
         pytest.skip("Only on nanos devices")
 
     account = DEFAULT_ACCOUNT
@@ -318,13 +315,13 @@ def test_automatic_low_cost_screensaver(firmware: Firmware,
     tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
 def test_automatic_low_cost_screensaver_cancelled_by_display(
-        firmware: Firmware,
+        device: Device,
         backend: BackendInterface,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
     """Test that low-cost screensaver is cancelled by display"""
 
-    if firmware.name != "nanos":
+    if device.type != DeviceType.NANOS:
         pytest.skip("Only on nanos devices")
 
     account = DEFAULT_ACCOUNT
@@ -367,13 +364,13 @@ def test_automatic_low_cost_screensaver_cancelled_by_display(
     )
 
 def test_automatic_low_cost_screensaver_exited_by_display(
-        firmware: Firmware,
+        device: Device,
         backend: BackendInterface,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
     """Test that low-cost screensaver is exited by display"""
 
-    if firmware.name != "nanos":
+    if device.type != DeviceType.NANOS:
         pytest.skip("Only on nanos devices")
 
     account = DEFAULT_ACCOUNT
@@ -455,7 +452,7 @@ def test_git(client: TezosClient) -> None:
         f"Expected {expected_commit} but got {commit}"
 
 
-def test_ledger_screensaver(firmware: Firmware,
+def test_ledger_screensaver(device: Device,
                             client: TezosClient,
                             tezos_navigator: TezosNavigator,
                             backend_name) -> None:
@@ -499,16 +496,14 @@ def test_ledger_screensaver(firmware: Firmware,
         time.sleep(1)
 
     res = input("Has the Ledger screensaver been activated?")
-    if firmware.device == "nanos":
+    if device.type == DeviceType.NANOS:
         assert (res.find("y") == -1), "Ledger screensaver should not have been activated"
     else:
         assert (res.find("y") != -1), "Ledger screensaver should have activated"
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ZEBRA_ACCOUNTS)
 def test_benchmark_attestation_time(account: Account,
-                                    firmware: Firmware,
                                     client: TezosClient,
                                     tezos_navigator: TezosNavigator,
                                     backend_name) -> None:
@@ -554,11 +549,8 @@ def test_benchmark_attestation_time(account: Account,
         )
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_authorize_baking(account: Account,
-                          firmware: Firmware,
-                          tezos_navigator: TezosNavigator) -> None:
+def test_authorize_baking(account: Account, tezos_navigator: TezosNavigator) -> None:
     """Test the AUTHORIZE_BAKING instruction."""
     snap_path = Path(f"{account}")
 
@@ -577,7 +569,7 @@ def test_authorize_baking(account: Account,
     )
 
 
-def test_deauthorize(firmware: Firmware,
+def test_deauthorize(device: Device,
                      backend: BackendInterface,
                      client: TezosClient,
                      tezos_navigator: TezosNavigator) -> None:
@@ -592,10 +584,10 @@ def test_deauthorize(firmware: Firmware,
 
         client.deauthorize()
 
-        if firmware.is_nano:
+        if device.is_nano:
             # No update for Stax or flex
             backend.wait_for_screen_change()
-        if firmware.device == "nanos":
+        if device.type == DeviceType.NANOS:
             # Wait blink
             time.sleep(0.5)
         tezos_navigator.assert_screen("authorized_key_after_authorize")
@@ -607,11 +599,9 @@ def test_deauthorize(firmware: Firmware,
         test_hwm=Hwm(0, 0)
     )
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 def test_get_auth_key(
         account: Account,
-        firmware: Firmware,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
     """Test the QUERY_AUTH_KEY instruction."""
@@ -623,11 +613,9 @@ def test_get_auth_key(
     assert path == account.path, \
         f"Expected {account.path} but got {path}"
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 def test_get_auth_key_with_curve(
         account: Account,
-        firmware: Firmware,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
     """Test the QUERY_AUTH_KEY_WITH_CURVE instruction."""
@@ -642,11 +630,8 @@ def test_get_auth_key_with_curve(
     assert sig_scheme == account.sig_scheme, \
         f"Expected {account.sig_scheme.name} but got {sig_scheme.name}"
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_get_public_key_baking(account: Account,
-                               firmware: Firmware,
-                               tezos_navigator: TezosNavigator) -> None:
+def test_get_public_key_baking(account: Account, tezos_navigator: TezosNavigator) -> None:
     """Test the AUTHORIZE_BAKING instruction."""
 
     tezos_navigator.authorize_baking(account)
@@ -659,11 +644,8 @@ def test_get_public_key_baking(account: Account,
         f"Expected public key {account.public_key} but got {public_key}"
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_get_public_key_silent(account: Account,
-                               firmware: Firmware,
-                               client: TezosClient) -> None:
+def test_get_public_key_silent(account: Account, client: TezosClient) -> None:
     """Test the GET_PUBLIC_KEY instruction."""
 
     public_key = client.get_public_key_silent(account)
@@ -672,11 +654,8 @@ def test_get_public_key_silent(account: Account,
         f"Expected public key {account.public_key} but got {public_key}"
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_get_public_key_prompt(account: Account,
-                               firmware: Firmware,
-                               tezos_navigator: TezosNavigator) -> None:
+def test_get_public_key_prompt(account: Account, tezos_navigator: TezosNavigator) -> None:
     """Test the PROMPT_PUBLIC_KEY instruction."""
 
     public_key = tezos_navigator.get_public_key_prompt(account, snap_path=Path(f"{account}"))
@@ -700,11 +679,8 @@ def test_reset_app_context(tezos_navigator: TezosNavigator) -> None:
     )
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_setup_app_context(account: Account,
-                           firmware: Firmware,
-                           tezos_navigator: TezosNavigator) -> None:
+def test_setup_app_context(account: Account, tezos_navigator: TezosNavigator) -> None:
     """Test the SETUP instruction."""
     snap_path = Path(f"{account}")
 
@@ -731,11 +707,9 @@ def test_setup_app_context(account: Account,
     )
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 def test_get_main_hwm(
         account: Account,
-        firmware: Firmware,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
     """Test the QUERY_MAIN_HWM instruction."""
@@ -757,11 +731,9 @@ def test_get_main_hwm(
         f"Expected main hmw {main_hwm} but got {received_main_hwm}"
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 def test_get_all_hwm(
         account: Account,
-        firmware: Firmware,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
     """Test the QUERY_ALL_HWM instruction."""
@@ -825,13 +797,12 @@ def build_block(level, current_round, chain_id):
     )
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 @pytest.mark.parametrize("with_hash", [False, True])
 def test_sign_preattestation(
         account: Account,
         with_hash: bool,
-        firmware: Firmware,
+        device: Device,
         backend: BackendInterface,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
@@ -869,7 +840,7 @@ def test_sign_preattestation(
 
         tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
-        if firmware.is_nano:
+        if device.is_nano:
             # No update for Stax or flex
             backend.both_click()
             backend.wait_for_screen_change()
@@ -883,13 +854,12 @@ def test_sign_preattestation(
     )
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 @pytest.mark.parametrize("with_hash", [False, True])
 def test_sign_attestation(
         account: Account,
         with_hash: bool,
-        firmware: Firmware,
+        device: Device,
         backend: BackendInterface,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
@@ -927,7 +897,7 @@ def test_sign_attestation(
 
         tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
-        if firmware.is_nano:
+        if device.is_nano:
             # No update for Stax or flex
             backend.both_click()
             backend.wait_for_screen_change()
@@ -941,13 +911,12 @@ def test_sign_attestation(
     )
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 @pytest.mark.parametrize("with_hash", [False, True])
 def test_sign_attestation_dal(
         account: Account,
         with_hash: bool,
-        firmware: Firmware,
+        device: Device,
         backend: BackendInterface,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
@@ -985,7 +954,7 @@ def test_sign_attestation_dal(
 
         tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
-        if firmware.is_nano:
+        if device.is_nano:
             # No update for Stax or flex
             backend.both_click()
             backend.wait_for_screen_change()
@@ -999,13 +968,12 @@ def test_sign_attestation_dal(
     )
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 @pytest.mark.parametrize("with_hash", [False, True])
 def test_sign_block(
         account: Account,
         with_hash: bool,
-        firmware: Firmware,
+        device: Device,
         backend: BackendInterface,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
@@ -1043,7 +1011,7 @@ def test_sign_block(
 
         tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
-        if firmware.is_nano:
+        if device.is_nano:
             # No update for Stax or flex
             backend.both_click()
             backend.wait_for_screen_change()
@@ -1158,13 +1126,11 @@ def test_sign_level_authorized(
             client.sign_message(account, message_2)
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 @pytest.mark.parametrize("with_hash", [False, True])
 def test_sign_delegation(
         account: Account,
         with_hash: bool,
-        firmware: Firmware,
         tezos_navigator: TezosNavigator) -> None:
     """Test the SIGN(_WITH_HASH) instruction on delegation."""
     snap_path = Path(f"{account}")
@@ -1295,13 +1261,11 @@ def test_sign_delegation_constraints(
         )
 
 
-@skip_nanos_bls
 @pytest.mark.parametrize("account", ACCOUNTS)
 @pytest.mark.parametrize("with_hash", [False, True])
 def test_sign_reveal(
         account: Account,
         with_hash: bool,
-        firmware: Firmware,
         client: TezosClient,
         tezos_navigator: TezosNavigator) -> None:
     """Test the SIGN(_WITH_HASH) instruction on reveal."""
@@ -1313,8 +1277,8 @@ def test_sign_reveal(
         test_hwm=Hwm(0, 0)
     )
 
-    proof = Default.BLS_SIGNATURE if account.sig_scheme == SigScheme.BLS \
-        else None
+    # Proof only supported for BLS keys
+    proof = None
 
     reveal = Reveal(
         public_key=account.public_key,
@@ -1818,7 +1782,7 @@ HMAC_TEST_SET = [
     ("0123456789abcdef0123456789abcdef0123456789abcdef")
 ]
 
-# This HMAC test don't pass with tz2, tz3 and tz4
+# This HMAC test don't pass with tz2 and tz3
 @pytest.mark.parametrize("account", TZ1_ACCOUNTS)
 @pytest.mark.parametrize("message_hex", HMAC_TEST_SET)
 def test_hmac(

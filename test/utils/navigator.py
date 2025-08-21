@@ -23,8 +23,8 @@ from contextlib import contextmanager
 from multiprocessing.pool import ThreadPool
 from enum import Enum
 
+from ledgered.devices import Device, DeviceType
 from ragger.backend import BackendInterface
-from ragger.firmware import Firmware
 from ragger.firmware.touch.element import Center
 from ragger.firmware.touch.screen import MetaScreen
 from ragger.firmware.touch.layouts import ChoiceList
@@ -101,9 +101,9 @@ class UseCaseReview(OriginalUseCaseReview):
 
     _center: Center
 
-    def __init__(self, client: BackendInterface, firmware: Firmware):
-        super().__init__(client, firmware)
-        self._center = Center(client, firmware)
+    def __init__(self, client: BackendInterface, device: Device):
+        super().__init__(client, device)
+        self._center = Center(client, device)
 
     def next(self) -> None:
         """Pass to the next screen."""
@@ -115,13 +115,13 @@ class UseCaseAddressConfirmation(OriginalUseCaseAddressConfirmation):
     _center: Center
 
     QR_POSITIONS = {
-        Firmware.STAX: Position(STAX_BUTTON_LOWER_LEFT.x, STAX_BUTTON_ABOVE_LOWER_MIDDLE.y),
-        Firmware.FLEX: Position(FLEX_BUTTON_LOWER_LEFT.x, FLEX_BUTTON_ABOVE_LOWER_MIDDLE.y)
+        DeviceType.STAX: Position(STAX_BUTTON_LOWER_LEFT.x, STAX_BUTTON_ABOVE_LOWER_MIDDLE.y),
+        DeviceType.FLEX: Position(FLEX_BUTTON_LOWER_LEFT.x, FLEX_BUTTON_ABOVE_LOWER_MIDDLE.y)
     }
 
-    def __init__(self, client: BackendInterface, firmware: Firmware):
-        super().__init__(client, firmware)
-        self._center = Center(client, firmware)
+    def __init__(self, client: BackendInterface, device: Device):
+        super().__init__(client, device)
+        self._center = Center(client, device)
 
     def next(self) -> None:
         """Pass to the next screen."""
@@ -130,7 +130,7 @@ class UseCaseAddressConfirmation(OriginalUseCaseAddressConfirmation):
     @property
     def qr_position(self) -> Position:
         """Position of the qr code."""
-        return UseCaseAddressConfirmation.QR_POSITIONS[self.firmware]
+        return UseCaseAddressConfirmation.QR_POSITIONS[self.device.type]
 
     def show_qr(self) -> None:
         """Tap to show qr code."""
@@ -142,9 +142,9 @@ class UseCaseSettings(OriginalUseCaseSettings):
 
     _toggle_list: ChoiceList
 
-    def __init__(self, client: BackendInterface, firmware: Firmware):
-        super().__init__(client, firmware)
-        self._toggle_list = ChoiceList(client, firmware)
+    def __init__(self, client: BackendInterface, device: Device):
+        super().__init__(client, device)
+        self._toggle_list = ChoiceList(client, device)
 
     def toggle_hwm_status(self):
         """Toggle the expert_mode switch."""
@@ -169,7 +169,7 @@ class TezosNavigator(metaclass=MetaScreen):
     provide_pk: UseCaseAddressConfirmation
 
     backend:   BackendInterface
-    firmware:  Firmware
+    device:    Device
     client:    TezosClient
     navigator: Navigator
 
@@ -179,13 +179,13 @@ class TezosNavigator(metaclass=MetaScreen):
 
     def __init__(self,
                  backend: BackendInterface,
-                 firmware: Firmware,
+                 device: Device,
                  client: TezosClient,
                  navigator: Navigator,
                  golden_run: bool,
                  test_name: str) -> None:
         self.backend   = backend
-        self.firmware  = firmware
+        self.device    = device
         self.client    = client
         self.navigator = navigator
 
@@ -195,11 +195,11 @@ class TezosNavigator(metaclass=MetaScreen):
 
     @property
     def _snapshots_dir(self) -> Path:
-        return self._root_dir / "snapshots" / self.firmware.name
+        return self._root_dir / "snapshots" / self.device.name
 
     @property
     def _tmp_snapshots_dir(self) -> Path:
-        return self._root_dir / "snapshots-tmp" / self.firmware.name
+        return self._root_dir / "snapshots-tmp" / self.device.name
 
     def navigate_and_compare(self,
                              snap_path: Optional[Union[Path, str]] = None,
@@ -287,7 +287,7 @@ class TezosNavigator(metaclass=MetaScreen):
     def goto_home_public_key(self) -> Generator[None, None, None]:
         """Action from authorized key screen."""
 
-        if self.firmware.is_nano:
+        if self.device.is_nano:
             self.backend.wait_for_home_screen()
             self.backend.right_click()
             self.backend.wait_for_screen_change()
@@ -309,7 +309,7 @@ class TezosNavigator(metaclass=MetaScreen):
         # Flex: chain_id + pkh
         yield
 
-        if self.firmware.is_nano:
+        if self.device.is_nano:
             self.backend.left_click()
             self.backend.wait_for_screen_change()
             # chain_id
@@ -328,7 +328,7 @@ class TezosNavigator(metaclass=MetaScreen):
     def goto_home_hwm(self) -> Generator[None, None, None]:
         """Action from authorized key screen."""
 
-        if self.firmware.is_nano:
+        if self.device.is_nano:
             self.backend.wait_for_home_screen()
             self.backend.left_click()
             self.backend.wait_for_screen_change()
@@ -345,7 +345,7 @@ class TezosNavigator(metaclass=MetaScreen):
             # hwm_status
             self.settings.next()
             self.backend.wait_for_screen_change()
-            if self.firmware == Firmware.FLEX:
+            if self.device.type == DeviceType.FLEX:
                 # chain_id + pkh
                 self.settings.next()
                 self.backend.wait_for_screen_change()
@@ -354,7 +354,7 @@ class TezosNavigator(metaclass=MetaScreen):
         # Flex: hwm + version
         yield
 
-        if self.firmware.is_nano:
+        if self.device.is_nano:
             self.backend.right_click()
             self.backend.wait_for_screen_change()
             self.assert_screen(NanoFixedScreen.HOME_SETTINGS)
@@ -371,7 +371,7 @@ class TezosNavigator(metaclass=MetaScreen):
 
     def accept_key_navigate(self, **kwargs):
         """Navigate until accept key"""
-        if self.firmware.is_nano:
+        if self.device.is_nano:
             self.navigate_and_compare(
                 navigate_instruction = NavInsID.RIGHT_CLICK,
                 validation_instructions = [NavInsID.BOTH_CLICK],
@@ -417,7 +417,7 @@ class TezosNavigator(metaclass=MetaScreen):
 
     def accept_reset_navigate(self, **kwargs):
         """Navigate until accept reset"""
-        if self.firmware.is_nano:
+        if self.device.is_nano:
             self.navigate_and_compare(
                 navigate_instruction = NavInsID.RIGHT_CLICK,
                 validation_instructions = [NavInsID.BOTH_CLICK],
@@ -449,7 +449,7 @@ class TezosNavigator(metaclass=MetaScreen):
 
     def accept_setup_navigate(self, **kwargs):
         """Navigate until accept setup"""
-        if self.firmware.is_nano:
+        if self.device.is_nano:
             self.navigate_and_compare(
                 navigate_instruction = NavInsID.RIGHT_CLICK,
                 validation_instructions = [NavInsID.BOTH_CLICK],
@@ -489,7 +489,7 @@ class TezosNavigator(metaclass=MetaScreen):
 
     def accept_sign_navigate(self, **kwargs):
         """Navigate until accept signing"""
-        if self.firmware.is_nano:
+        if self.device.is_nano:
             self.navigate_and_compare(
                 navigate_instruction = NavInsID.RIGHT_CLICK,
                 validation_instructions = [NavInsID.BOTH_CLICK],
@@ -556,7 +556,7 @@ class TezosNavigator(metaclass=MetaScreen):
 
     def disable_hwm(self) -> None:
         """Disables HWM settings by navigating on the screen starting from home_screen"""
-        if self.firmware.is_nano:
+        if self.device.is_nano:
             self.assert_screen(NanoFixedScreen.HOME_WELCOME)
             self.left()
             self.assert_screen(NanoFixedScreen.HOME_QUIT)

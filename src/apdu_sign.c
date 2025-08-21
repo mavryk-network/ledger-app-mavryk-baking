@@ -223,11 +223,6 @@ int handle_sign(buffer_t *cdata, const bool last, const bool with_hash) {
     CX_CHECK(
         cx_hash_no_throw((cx_hash_t *) &G.hash_state.state, 0, cdata->ptr, cdata->size, NULL, 0));
 
-#ifndef TARGET_NANOS
-    memmove(G.message, cdata->ptr, cdata->size);
-    G.message_len = cdata->size;
-#endif
-
     if (last) {
         CX_CHECK(cx_hash_no_throw((cx_hash_t *) &G.hash_state.state,
                                   CX_LAST,
@@ -269,18 +264,6 @@ static int perform_signature(bool const send_hash) {
     uint8_t resp[SIGN_HASH_SIZE + MAX_SIGNATURE_SIZE] = {0};
     size_t offset = 0;
 
-    uint8_t *message = G.final_hash;
-    size_t message_len = sizeof(G.final_hash);
-
-#ifndef TARGET_NANOS
-    // The BLS signature uses its own hash function.
-    // The entire message must be stored in `G.message`.
-    if (global.path_with_curve.derivation_type == DERIVATION_TYPE_BLS12_381) {
-        message = G.message;
-        message_len = G.message_len;
-    }
-#endif
-
     if (send_hash) {
         memcpy(resp + offset, G.final_hash, sizeof(G.final_hash));
         offset += sizeof(G.final_hash);
@@ -288,7 +271,11 @@ static int perform_signature(bool const send_hash) {
 
     size_t signature_size = MAX_SIGNATURE_SIZE;
 
-    CX_CHECK(sign(resp + offset, &signature_size, &global.path_with_curve, message, message_len));
+    CX_CHECK(sign(resp + offset,
+                  &signature_size,
+                  &global.path_with_curve,
+                  G.final_hash,
+                  sizeof(G.final_hash)));
 
     offset += signature_size;
 
