@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Query APDU instruction handling
+/* Mavryk Ledger application - Query APDU instruction handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -70,12 +70,12 @@ int handle_query_main_hwm(void) {
 }
 
 int handle_query_auth_key(void) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
     uint8_t resp[1u + (MAX_BIP32_PATH * sizeof(uint32_t))] = {0};
     size_t offset = 0;
 
     uint8_t const length = g_hwm.baking_key.bip32_path.length;
-    TZ_ASSERT(length <= NUM_ELEMENTS(g_hwm.baking_key.bip32_path.components), EXC_WRONG_LENGTH);
+    MV_ASSERT(length <= NUM_ELEMENTS(g_hwm.baking_key.bip32_path.components), EXC_WRONG_LENGTH);
 
     resp[offset] = length;
     offset++;
@@ -91,14 +91,14 @@ end:
 }
 
 int handle_query_auth_key_with_curve(void) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
     uint8_t resp[2u + (MAX_BIP32_PATH * sizeof(uint32_t))] = {0};
     size_t offset = 0;
 
     uint8_t const length = g_hwm.baking_key.bip32_path.length;
-    TZ_ASSERT(length <= NUM_ELEMENTS(g_hwm.baking_key.bip32_path.components), EXC_WRONG_LENGTH);
+    MV_ASSERT(length <= NUM_ELEMENTS(g_hwm.baking_key.bip32_path.components), EXC_WRONG_LENGTH);
 
-    TZ_ASSERT(DERIVATION_TYPE_IS_SET(g_hwm.baking_key.derivation_type),
+    MV_ASSERT(DERIVATION_TYPE_IS_SET(g_hwm.baking_key.derivation_type),
               EXC_REFERENCED_DATA_NOT_FOUND);
 
     resp[offset] = (uint8_t) g_hwm.baking_key.derivation_type;

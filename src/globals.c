@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Global strcuture handling
+/* Mavryk Ledger application - Global strcuture handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

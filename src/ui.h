@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Common UI functions
+/* Mavryk Ledger application - Common UI functions
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -56,30 +56,30 @@ void ux_set_low_cost_display_mode(bool enable);
 /**
  * @brief Calculates the chain id for the idle screens
  *
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-tz_exc calculate_idle_screen_chain_id(void);
+mv_exc calculate_idle_screen_chain_id(void);
 
 /**
  * @brief Calculates the authorized key for the idle screens
  *
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-tz_exc calculate_idle_screen_authorized_key(void);
+mv_exc calculate_idle_screen_authorized_key(void);
 
 /**
  * @brief Calculates the HWM for the idle screens
  *
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-tz_exc calculate_idle_screen_hwm(void);
+mv_exc calculate_idle_screen_hwm(void);
 
 /**
  * @brief Calculates baking values for the idle screens
  *
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-tz_exc calculate_baking_idle_screens_data(void);
+mv_exc calculate_baking_idle_screens_data(void);
 
 /**
  * @brief Prepare confirmation screens callbacks

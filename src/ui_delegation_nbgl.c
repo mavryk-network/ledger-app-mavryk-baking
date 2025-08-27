@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Delegate NBGL UI handling
+/* Mavryk Ledger application - Delegate NBGL UI handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -78,18 +78,18 @@ static void confirmation_callback(bool confirm) {
 }
 
 int prompt_delegation(ui_callback_t const ok_cb, ui_callback_t const cxl_cb) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
-    TZ_ASSERT(G.maybe_ops.is_valid, EXC_MEMORY_ERROR);
+    MV_ASSERT(G.maybe_ops.is_valid, EXC_MEMORY_ERROR);
 
     delegation_context.ok_cb = ok_cb;
     delegation_context.cxl_cb = cxl_cb;
 
-    TZ_CHECK(bip32_path_with_curve_to_pkh_string(delegation_context.tagValueRef[ADDRESS_IDX],
+    MV_CHECK(bip32_path_with_curve_to_pkh_string(delegation_context.tagValueRef[ADDRESS_IDX],
                                                  MAX_LENGTH,
                                                  &global.path_with_curve));
 
-    TZ_ASSERT(microtez_to_string(delegation_context.tagValueRef[FEE_IDX],
+    MV_ASSERT(micromav_to_string(delegation_context.tagValueRef[FEE_IDX],
                                  MAX_LENGTH,
                                  G.maybe_ops.v.total_fee) >= 0,
               EXC_WRONG_LENGTH);
@@ -106,7 +106,7 @@ int prompt_delegation(ui_callback_t const ok_cb, ui_callback_t const cxl_cb) {
 
     nbgl_useCaseReviewLight(TYPE_OPERATION,
                             &delegation_context.tagValueList,
-                            &C_tezos,
+                            &C_mavryk,
                             "Register delegate",
                             NULL,
                             "Confirm delegate registration",

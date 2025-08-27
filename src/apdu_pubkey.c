@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Public key APDU instruction handling
+/* Mavryk Ledger application - Public key APDU instruction handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -50,9 +50,9 @@ static bool pubkey_ok(void) {
  * @return true
  */
 static bool baking_ok(void) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
-    TZ_CHECK(authorize_baking(global.path_with_curve.derivation_type,
+    MV_CHECK(authorize_baking(global.path_with_curve.derivation_type,
                               &global.path_with_curve.bip32_path));
     return pubkey_ok();
 
@@ -68,19 +68,19 @@ int handle_get_public_key(buffer_t *cdata,
                           derivation_type_t derivation_type,
                           bool authorize,
                           bool prompt) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
-    TZ_ASSERT_NOT_NULL(cdata);
+    MV_ASSERT_NOT_NULL(cdata);
 
     global.path_with_curve.derivation_type = derivation_type;
     if ((cdata->size == 0u) && authorize) {
-        TZ_ASSERT(copy_bip32_path_with_curve(&global.path_with_curve, &(g_hwm.baking_key)),
+        MV_ASSERT(copy_bip32_path_with_curve(&global.path_with_curve, &(g_hwm.baking_key)),
                   EXC_MEMORY_ERROR);
     } else {
-        TZ_ASSERT(read_bip32_path(cdata, &global.path_with_curve.bip32_path), EXC_WRONG_VALUES);
+        MV_ASSERT(read_bip32_path(cdata, &global.path_with_curve.bip32_path), EXC_WRONG_VALUES);
     }
 
-    TZ_ASSERT(cdata->size == cdata->offset, EXC_WRONG_LENGTH);
+    MV_ASSERT(cdata->size == cdata->offset, EXC_WRONG_LENGTH);
 
     if (!prompt) {
         return provide_pubkey(&global.path_with_curve);

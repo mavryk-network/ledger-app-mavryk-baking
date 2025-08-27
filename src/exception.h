@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Exception primitives
+/* Mavryk Ledger application - Exception primitives
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -30,7 +30,7 @@
  *
  */
 
-typedef uint16_t tz_exc;
+typedef uint16_t mv_exc;
 
 #define SW_OK                         0x9000u
 #define EXC_WRONG_PARAM               0x6B00u
@@ -46,11 +46,11 @@ typedef uint16_t tz_exc;
 #define EXC_MEMORY_ERROR              0x9200u
 #define EXC_UNKNOWN_CX_ERR            0x9001u
 
-// Print a tz exception code
-#define TZ_EXC_PRINT(exc) PRINTF("TZ exception: 0x%04x", exc)
+// Print a mv exception code
+#define MV_EXC_PRINT(exc) PRINTF("MV exception: 0x%04x", exc)
 
 // Checks the error code of a function
-#define TZ_CHECK(call)      \
+#define MV_CHECK(call)      \
     do {                    \
         exc = (call);       \
         if (exc != SW_OK) { \
@@ -59,14 +59,14 @@ typedef uint16_t tz_exc;
     } while (0)
 
 // Fail with an exception
-#define TZ_FAIL(_exc) \
+#define MV_FAIL(_exc) \
     do {              \
         exc = (_exc); \
         goto end;     \
     } while (0)
 
 // Asserts a condition. Updates `exc` accordingly
-#define TZ_ASSERT(cond, _exc) \
+#define MV_ASSERT(cond, _exc) \
     do {                      \
         if (!(cond)) {        \
             exc = (_exc);     \
@@ -74,10 +74,10 @@ typedef uint16_t tz_exc;
         }                     \
     } while (0)
 
-#define TZ_ASSERT_NOT_NULL(_x) TZ_ASSERT((_x) != NULL, EXC_MEMORY_ERROR)
+#define MV_ASSERT_NOT_NULL(_x) MV_ASSERT((_x) != NULL, EXC_MEMORY_ERROR)
 
-// Converts `cx_err_t error` to `tz_exc exc`
-#define TZ_CONVERT_CX()                        \
+// Converts `cx_err_t error` to `mv_exc exc`
+#define MV_CONVERT_CX()                        \
     do {                                       \
         if (error != CX_OK) {                  \
             PRINTF("CX error: 0x%08x", error); \

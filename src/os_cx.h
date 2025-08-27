@@ -1,4 +1,4 @@
-/* Tezos Ledger application
+/* Mavryk Ledger application
 
    Copyright 2019 Obsidian Systems
 

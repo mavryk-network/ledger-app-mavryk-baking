@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Setup APDU instruction handling
+/* Mavryk Ledger application - Setup APDU instruction handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -68,19 +68,19 @@ static bool ok(void) {
  *   + Bip32 path: key path
  */
 int handle_setup(buffer_t *cdata, derivation_type_t derivation_type) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
-    TZ_ASSERT_NOT_NULL(cdata);
+    MV_ASSERT_NOT_NULL(cdata);
 
     global.path_with_curve.derivation_type = derivation_type;
 
-    TZ_ASSERT(buffer_read_u32(cdata, &G.main_chain_id.v, BE) &&  // chain id
+    MV_ASSERT(buffer_read_u32(cdata, &G.main_chain_id.v, BE) &&  // chain id
                   buffer_read_u32(cdata, &G.hwm.main, BE) &&     // main hwm level
                   buffer_read_u32(cdata, &G.hwm.test, BE) &&     // test hwm level
                   read_bip32_path(cdata, &global.path_with_curve.bip32_path),
               EXC_WRONG_VALUES);
 
-    TZ_ASSERT(cdata->size == cdata->offset, EXC_WRONG_LENGTH);
+    MV_ASSERT(cdata->size == cdata->offset, EXC_WRONG_LENGTH);
 
     return prompt_setup(ok, reject);
 

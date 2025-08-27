@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Sign handling
+/* Mavryk Ledger application - Sign handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

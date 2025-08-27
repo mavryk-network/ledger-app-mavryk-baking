@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Baking authorizing primitives
+/* Mavryk Ledger application - Baking authorizing primitives
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -37,16 +37,16 @@ bool is_valid_level(level_t lvl) {
     return !(lvl & 0xC0000000);
 }
 
-tz_exc write_high_water_mark(parsed_baking_data_t const *const in) {
-    tz_exc exc = SW_OK;
+mv_exc write_high_water_mark(parsed_baking_data_t const *const in) {
+    mv_exc exc = SW_OK;
 
-    TZ_ASSERT_NOT_NULL(in);
+    MV_ASSERT_NOT_NULL(in);
 
-    TZ_ASSERT(is_valid_level(in->level), EXC_WRONG_VALUES);
+    MV_ASSERT(is_valid_level(in->level), EXC_WRONG_VALUES);
 
     // If the chain matches the main chain *or* the main chain is not set, then use 'main' HWM.
     high_watermark_t *dest = select_hwm_by_chain(in->chain_id);
-    TZ_ASSERT_NOT_NULL(dest);
+    MV_ASSERT_NOT_NULL(dest);
 
     if ((in->level > dest->highest_level) || (in->round > dest->highest_round)) {
         dest->had_attestation = false;
@@ -63,13 +63,13 @@ end:
     return exc;
 }
 
-tz_exc authorize_baking(derivation_type_t const derivation_type,
+mv_exc authorize_baking(derivation_type_t const derivation_type,
                         bip32_path_t const *const bip32_path) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
-    TZ_ASSERT_NOT_NULL(bip32_path);
+    MV_ASSERT_NOT_NULL(bip32_path);
 
-    TZ_ASSERT(bip32_path->length <= NUM_ELEMENTS(g_hwm.baking_key.bip32_path.components),
+    MV_ASSERT(bip32_path->length <= NUM_ELEMENTS(g_hwm.baking_key.bip32_path.components),
               EXC_WRONG_LENGTH);
 
     if (bip32_path->length != 0u) {
@@ -141,14 +141,14 @@ static bool is_path_authorized(derivation_type_t const derivation_type,
            bip32_paths_eq(bip32_path, (const bip32_path_t *) &g_hwm.baking_key.bip32_path);
 }
 
-tz_exc guard_baking_authorized(parsed_baking_data_t const *const baking_info,
+mv_exc guard_baking_authorized(parsed_baking_data_t const *const baking_info,
                                bip32_path_with_curve_t const *const key) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
-    TZ_ASSERT_NOT_NULL(baking_info);
-    TZ_ASSERT_NOT_NULL(key);
-    TZ_ASSERT(is_path_authorized(key->derivation_type, &key->bip32_path), EXC_SECURITY);
-    TZ_ASSERT(is_level_authorized(baking_info), EXC_WRONG_VALUES);
+    MV_ASSERT_NOT_NULL(baking_info);
+    MV_ASSERT_NOT_NULL(key);
+    MV_ASSERT(is_path_authorized(key->derivation_type, &key->bip32_path), EXC_SECURITY);
+    MV_ASSERT(is_level_authorized(baking_info), EXC_WRONG_VALUES);
 
 end:
     return exc;

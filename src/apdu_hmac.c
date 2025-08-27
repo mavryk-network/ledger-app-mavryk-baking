@@ -1,4 +1,4 @@
-/* Tezos Ledger application - HMAC handler
+/* Mavryk Ledger application - HMAC handler
 
    Copyright 2023 Ledger
    Copyright 2019 Obsidian Systems
@@ -36,23 +36,23 @@
  * @param in_size: input size
  * @param bip32_path: key path
  * @param derivation_type: key curve
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-static inline tz_exc hmac(uint8_t *const out,
+static inline mv_exc hmac(uint8_t *const out,
                           size_t *const out_size,
                           apdu_hmac_state_t *const state,
                           uint8_t const *const in,
                           size_t const in_size,
                           bip32_path_with_curve_t const *const path_with_curve) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
     cx_err_t error = CX_OK;
 
-    TZ_ASSERT_NOT_NULL(out);
-    TZ_ASSERT_NOT_NULL(state);
-    TZ_ASSERT_NOT_NULL(in);
-    TZ_ASSERT_NOT_NULL(path_with_curve);
+    MV_ASSERT_NOT_NULL(out);
+    MV_ASSERT_NOT_NULL(state);
+    MV_ASSERT_NOT_NULL(in);
+    MV_ASSERT_NOT_NULL(path_with_curve);
 
-    TZ_ASSERT(*out_size >= CX_SHA256_SIZE, EXC_WRONG_LENGTH);
+    MV_ASSERT(*out_size >= CX_SHA256_SIZE, EXC_WRONG_LENGTH);
 
     // Pick a static, arbitrary SHA256 value based on a quote of Jesus.
     static uint8_t const key_sha256[] = {0x6c, 0x4e, 0x7e, 0x70, 0x6c, 0x54, 0xd3, 0x67,
@@ -83,7 +83,7 @@ static inline tz_exc hmac(uint8_t *const out,
                                *out_size);
 
 end:
-    TZ_CONVERT_CX();
+    MV_CONVERT_CX();
     return exc;
 }
 
@@ -93,19 +93,19 @@ end:
  *   + (max-size) uint8 *: message
  */
 int handle_hmac(buffer_t *cdata, derivation_type_t derivation_type) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
-    TZ_ASSERT_NOT_NULL(cdata);
+    MV_ASSERT_NOT_NULL(cdata);
 
     memset(&G, 0, sizeof(G));
 
     bip32_path_with_curve_t path_with_curve = {0};
     path_with_curve.derivation_type = derivation_type;
 
-    TZ_ASSERT(read_bip32_path(cdata, &path_with_curve.bip32_path), EXC_WRONG_VALUES);
+    MV_ASSERT(read_bip32_path(cdata, &path_with_curve.bip32_path), EXC_WRONG_VALUES);
 
     size_t hmac_size = sizeof(G.hmac);
-    TZ_CHECK(hmac(G.hmac,
+    MV_CHECK(hmac(G.hmac,
                   &hmac_size,
                   &G,
                   cdata->ptr + cdata->offset,

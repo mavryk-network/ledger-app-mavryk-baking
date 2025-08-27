@@ -1,11 +1,11 @@
-# Tezos Baking
+# Mavryk Baking
 
 ## Introduction
 
 
 ## Overview
 
-This repository contains Ledger application to support baking on Tezos blockchain , i.e. signing new blocks and pre-attestations and attestations. For more information about baking, see
+This repository contains Ledger application to support baking on Mavryk blockchain , i.e. signing new blocks and pre-attestations and attestations. For more information about baking, see
 *[Benefits and Risks of Home Baking](https://medium.com/@tezos_91823/benefits-and-risks-of-home-baking-a631c9ca745)*.
 
 It is possible to do all of these things without a hardware wallet, but using a
@@ -13,19 +13,19 @@ hardware wallet provides you better security against key theft.
 
 ## Usage
 
-Install `tezos-baking` app from [Ledger-live](https://www.ledger.com/ledger-live). You may have to enable developer mode to see tezos-baking in the available apps list.
-You also will need to install `tezos-wallet` app for initial setup to stake tez for baking.
+Install `mavryk-baking` app from [Ledger-live](https://www.ledger.com/ledger-live). You may have to enable developer mode to see mavryk-baking in the available apps list.
+You also will need to install `mavryk-wallet` app for initial setup to stake mav for baking.
 
 ### STEP 1
   - Initialize your ledger device with your secret phrase and PIN and
-  - Install `tezos-baking` and `tezos-wallet` apps.
+  - Install `mavryk-baking` and `mavryk-wallet` apps.
 
 ### STEP 2
-  - Setup ledger for baking using instructions given in this file in section [Baking](./README.md#setup-tezos-baking-using-ledger) upto [Staking tez](./README.md#stake-tez-to-get-baking-rights).
-  - Exit the Tezos wallet app.
+  - Setup ledger for baking using instructions given in this file in section [Baking](./README.md#setup-mavryk-baking-using-ledger) upto [Staking mav](./README.md#stake-mav-to-get-baking-rights).
+  - Exit the Mavryk wallet app.
 ### STEP 3
   - `IMPORTANT` Make sure to `enable screensaver` and `disable global PIN lock` in ledger settings. Make also sure to disable `Battery saver` on NanoX, Stax and Flex devices.
-  - Open the baking app and start baking with octez client.
+  - Open the baking app and start baking with mavkit client.
 
 Disabling global PIN lock makes it possible for baking app to continue respond to signing requests even when screensaver is running on the screen of the ledger. Baking app uses Ledger screensaver (custom screensaver for nanos) to avoid screen burn.
 
@@ -50,9 +50,9 @@ To disable HWM,
 1. Go to settings
 2. On the screeen High Watermark, press both buttons to toggle HWM to Disabled.
 ```
-We request every user of `baking_app` to disable HWM setting so that they dont experience NVRAM burn. For additional safety from double baking the users can use `octez-signer` instead of `octez-client`. Octez-signer has inherent HWM tracking and double baking protection.
+We request every user of `baking_app` to disable HWM setting so that they dont experience NVRAM burn. For additional safety from double baking the users can use `mavkit-signer` instead of `mavkit-client`. Mavkit-signer has inherent HWM tracking and double baking protection.
 
-Even when HWM is disabled, the `baking_app` keeps track of HWM in RAM thus in normal operation of the app, the user is protected from double baking. Only when you reboot/power_off the device abruptly, ` you have to take extra care to make sure you dont double bake. You can achieve this either using octez-signer or reset HWM to the block level/round you have not signed yet.`
+Even when HWM is disabled, the `baking_app` keeps track of HWM in RAM thus in normal operation of the app, the user is protected from double baking. Only when you reboot/power_off the device abruptly, ` you have to take extra care to make sure you dont double bake. You can achieve this either using mavkit-signer or reset HWM to the block level/round you have not signed yet.`
 
 ## Screensaver
 
@@ -109,20 +109,20 @@ take effect.
 
 ## Installing the Applications with Ledger Live
 
-The easiest way to obtain and install the Tezos Ledger apps is to download them
-from [Ledger Live](https://www.ledger.com/pages/ledger-live). Tezos Baking is available when you enable 'Developer Mode' in Settings.
+The easiest way to obtain and install the Mavryk Ledger apps is to download them
+from [Ledger Live](https://www.ledger.com/pages/ledger-live). Mavryk Baking is available when you enable 'Developer Mode' in Settings.
 
 If you've used Ledger Live for application installation, you can skip the following section.
 
 ## Obtaining the Applications without Ledger Live
 
-Download the source code for application from github repository [App-tezos-baking](https://github.com/LedgerHQ/app-tezos).
+Download the source code for application from github repository [App-mavryk-baking](https://github.com/LedgerHQ/app-mavryk).
 
 ### Building
 
 ```
-$ git clone https://github.com/trilitech/ledger-app-tezos-baking.git
-$ cd ledger-app-tezos-baking
+$ git clone https://github.com/mavryk-network/ledger-app-mavryk-baking.git
+$ cd ledger-app-mavryk-baking
 ```
 Then run the following command to enter into docker container provided by Ledger. You will need to have  docker cli installed.
 Use the docker container `ledger-app-dev-tools` provided by Ledger to build the app.
@@ -144,21 +144,21 @@ You can replace `NANOS` with `NANOSP`, `NANOX`, `STAX`, `FLEX` for the other dev
 ### Testing
 The application tests are run using same docker container used for building. Inside the docker container run following script,
 ```
-$ apk add gmp-dev libsodium-dev;
-$ python3 -m venv tezos_test_env --system-site-package;
-$ source ./tezos_test_env/bin/activate;
-(tezos_test_env)$ python3 -m pip install -r test/requirements.txt -q ;
+$ apt install libgmp-dev libsodium-dev -y;
+$ python3 -m venv mavryk_test_env --system-site-package;
+$ source ./mavryk_test_env/bin/activate;
+(mavryk_test_env)$ python3 -m pip install -r test/requirements.txt -q ;
 ```
 Now you can run ragger tests for any perticular ledger device. Please make sure you have built the app.elf files for that perticular device first. Then run following command:
 ```
-(tezos_test_env)$ python3 -m pytest test --device nanosp
+(mavryk_test_env)$ python3 -m pytest test --device nanosp
 ```
 Replace nanosp with any of the following for respective device: nanos, nanosp, nanox , stax , flex.
 
 These tests are run on Ledger emulator called speculos which emulates the actual ledger device. To run theese test on actual device you have to choose a backend. Run following commands to run these test on device:
 ```
-(tezos_test_env)$ python3 -m pip install ragger[all_backends]
-(tezos_test_env)$ python3 -m pytest test --device nanosp --backend ledgercomm -s
+(mavryk_test_env)$ python3 -m pip install ragger[all_backends]
+(mavryk_test_env)$ python3 -m pytest test --device nanosp --backend ledgercomm -s
 ```
 Note the `-s` flag which is required when running interactive tests with pytest. You can also choose `ledgerwallet` backend to run tests on device.
 
@@ -244,7 +244,7 @@ printed in your terminal.
 
 You will need to push confirmation buttons on your Ledger device a few times
 during the installation process and re-enter your PIN code near the end of the
-process. You should finally see the Tezos logo appear on the screen.
+process. You should finally see the Mavryk logo appear on the screen.
 
 If you see the "Generated random root public key" message and then something
 that looks like this:
@@ -260,7 +260,7 @@ the most likely cause is that your `udev` rules are not set up correctly, or you
 did not unplug your Ledger hardware wallet between setting up the rules and attempting to
 install. Please confirm the correctness of your `udev` rules.
 
-To load a new version of the Tezos application onto the Ledger device in the future,
+To load a new version of the Mavryk application onto the Ledger device in the future,
 you can run the command again, and it will automatically remove any
 previously-loaded version.
 
@@ -270,20 +270,20 @@ If you'd like to remove your app, you can do this. In the virtualenv
 described in the last sections, run this command:
 
 ```
-$ python -m ledgerblue.deleteApp --targetId 0x31100004 --appName 'Tezos Baking'
+$ python -m ledgerblue.deleteApp --targetId 0x31100004 --appName 'Mavryk Baking'
 ```
 
-Replace the `appName` parameter "Tezos" with whatever application name you used when you loaded the application onto the device.
+Replace the `appName` parameter "Mavryk" with whatever application name you used when you loaded the application onto the device.
 
 Then follow the prompts on the Ledger device screen.
 
 ### Confirming the Installation Worked
 
-You should now have `Tezos Baking` app installed on the device. The `Tezos Baking` application should display a `0` under screen on the screen ,`Highest Watermark` which is the highest block level baked so far (`0` in case of no blocks).
+You should now have `Mavryk Baking` app installed on the device. The `Mavryk Baking` application should display a `0` under screen on the screen ,`Highest Watermark` which is the highest block level baked so far (`0` in case of no blocks).
 
-## Setup tezos baking using Ledger
+## Setup mavryk baking using Ledger
 
-The Tezos Baking Application supports the following operations:
+The Mavryk Baking Application supports the following operations:
 
   1. Get public key
   2. Setup ledger for baking
@@ -293,70 +293,70 @@ The Tezos Baking Application supports the following operations:
 
 It will only sign block headers and attestations, as the purpose of the baking
 application is that it cannot be co-opted to perform other types of operations (like
-transferring XTZ). If a Ledger device is running with the Tezos Baking Application, it
+transferring MVRK). If a Ledger device is running with the Mavryk Baking Application, it
 is the expectation of its owner that no transactions will need to be signed with
 it. To sign transactions with that Ledger device, you will need to switch it to using
-the Tezos Wallet application, or have the Tezos Wallet application installed on
+the Mavryk Wallet application, or have the Mavryk Wallet application installed on
 a paired device. Therefore, if you have a larger stake and bake frequently, we
 recommend the paired device approach. If, however, you bake infrequently and can
-afford to have your baker offline temporarily, then switching to the Tezos
+afford to have your baker offline temporarily, then switching to the Mavryk
 Wallet application on the same Ledger device should suffice.
 
 
-### Setup Ledger with Tezos client
+### Setup Ledger with Mavryk client
 
-To connect ledger with Tezos client, you need to download [Tezos](https://www.gitlab.com/tezos/tezos).
-You need to have nix installed on your system. Build tezos with following commands:
+To connect ledger with Mavryk client, you need to download [Mavryk](https://www.gitlab.com/mavryk-network/mavryk-protocol).
+You need to have nix installed on your system. Build mavryk with following commands:
 ```
-$ git clone https://gitlab.com/tezos/tezos.git
-$ cd tezos
+$ git clone https://gitlab.com/mavryk-network/mavryk-protocol.git
+$ cd mavryk-protocol
 $ nix-shell -j auto
 $ make
 ```
-This will build the latest version of tezos repo.
+This will build the latest version of mavryk repo.
 Now connect the ledger device to USB port of your computer and run following command:
 ```
-$ ./octez-client list connected ledgger
+$ ./mavkit-client list connected ledgger
 ```
 It will given output as follows:
 ```
 ## Ledger `masculine-pig-stupendous-dugong`
-Found a Tezos Baking 2.4.7 (git-description: "v2.4.7-70-g3195b4d2")
+Found a Mavryk Baking 2.4.7 (git-description: "v2.4.7-70-g3195b4d2")
 application running on Ledger Nano S Plus at [1-1.4.6:1.0].
 
-To use keys at BIP32 path m/44'/1729'/0'/0' (default Tezos key path), use one
+To use keys at BIP32 path m/44'/1969'/0'/0' (default Mavryk key path), use one
 of:
-  octez-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/ed25519/0h/0h"
-  octez-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/secp256k1/0h/0h"
-  octez-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/P-256/0h/0h"
-  octez-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/bip25519/0h/0h"
+  mavkit-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/ed25519/0h/0h"
+  mavkit-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/secp256k1/0h/0h"
+  mavkit-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/P-256/0h/0h"
+  mavkit-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/bip25519/0h/0h"
 ```
 Here the last four lines give information about the available keys you can use to sign blocks/attestations etc. in baking. The names in front of ledger:// are generated randomly and represent a unique path to key derivations in ledger. Choose one of the keys listed above as follows:
 ```
-$ ./octez-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/bip25519/0h/0h"
+$ ./mavkit-client import secret key ledger_username "ledger://masculine-pig-stupendous-dugong/bip25519/0h/0h"
 ```
 Here we have chosen the last key type bip25519. You can choose any one of the available keys.
 
 You can verify that you have successfully setup ledger with following command:
 ```
-$ ./octez-client list known addresses
+$ ./mavkit-client list known addresses
 ```
 It will show output as follows:
 ```
-ledger_<...>: tz1N4GQ8gYgMdq6gUsja783KJButHUHn5K7z (ledger sk known)
+ledger_<...>: mv1AThD9hBY2up4XDA8e4WizwvN3qWz4s71W (ledger sk known)
 ```
 You can use the address ledger_<...> for further commands to setup the baking operations with Ledger.
 
 ### Setup Node and baker
 
-It is recommended to practice baking on tezos testnet before you acutally start baking on mainnet  with real money. You can get more information
+It is recommended to practice baking on mavryk testnet before you acutally start baking on mainnet  with real money. You can get more information
 about baking on testnet at [Baking-setup-Tutorial](https://docs.tezos.com/tutorials/join-dal-baker).
 Here we only give information about changes you have to make in above tutorial to bake with Ledger instead of an auto generated key.
 
-In the tutorial skip the command `octez-client gen keys my_baker` and instead use the ledger_<...> in place of my_baker.
+In the tutorial skip the command `mavkit-client gen keys my_baker` and instead use the ledger_<...> in place of my_baker.
 Use the following command to store your address in environmental variable `MY_BAKER`
 ```
-$ MY_BAKER="$(./octez-client show address ledger_<...> | head -n 1 | cut -d ' ' -f 2)"
+$ MY_BAKER="$(./mavkit-client show address ledger_<...> | head -n 1 | cut -d ' ' -f 2)"
 ```
 
 ### Setup ledger device to bake and attest
@@ -371,7 +371,7 @@ time.
 In order to authorize a public key for baking, use the APDU for setting up the ledger device to bake:
 
     ```
-    $ octez-client setup ledger to bake for ledger_<...>
+    $ mavkit-client setup ledger to bake for ledger_<...>
     ```
 
     This only authorizes the key for baking on the Ledger device, but does
@@ -388,19 +388,19 @@ delegate. This is formally done by delegating the account to itself. As a
 non-originated account, an account directly stored on the Ledger device can only
 delegate to itself.
 
-Open the Tezos Baking Application on the device, and then run this:
+Open the Mavryk Baking Application on the device, and then run this:
 
 ```
-$ octez-client register key ledger_<...> as delegate
+$ mavkit-client register key ledger_<...> as delegate
 ```
 
 This command is intended to inform the blockchain itself of your intention to
 bake with this key.
 
-### Stake tez to get baking rights
-To sign transactions involving exchange of tez you need tezos-wallet app. You need to stake certain amount of tez to get baking rights. Install Tezos wallet app on the same ledger device and run following command. No setup is needed as we have already setup the address from which we are deducting the amount.
+### Stake mav to get baking rights
+To sign transactions involving exchange of mav you need mavryk-wallet app. You need to stake certain amount of mav to get baking rights. Install Mavryk wallet app on the same ledger device and run following command. No setup is needed as we have already setup the address from which we are deducting the amount.
 ```
-$ octez-client stake <amount> ledger_<...>
+$ mavkit-client stake <amount> ledger_<...>
 ```
 
 ### Sign
@@ -426,23 +426,23 @@ self-delegation).
 
 With the exception of self-delegations, as long as the key is configured and the
 high watermark constraint is followed, there is no user prompting required for
-signing. Tezos Baking will only ever sign without prompting or reject an
+signing. Mavryk Baking will only ever sign without prompting or reject an
 attempt at signing; this operation is designed to be used unsupervised. As mentioned,
  the only exception to this is self-delegation.
 
 ### Security during baking
 
-The Tezos-Baking app needs to be kept open during baking and ledger is unlocked during that time. To prevent screen burn, the baking app goes into blank screen when it starts signing blocks/attestation as baker. But the app remains unlocked. One can not sign any transaction operation using baking app, therefore there is no need of any concern. But to exit the baking app, one needs to enter PIN. This restriction is in place to avoid misuse of physical ledger device when its kept unattended during baking process.
+The Mavryk-Baking app needs to be kept open during baking and ledger is unlocked during that time. To prevent screen burn, the baking app goes into blank screen when it starts signing blocks/attestation as baker. But the app remains unlocked. One can not sign any transaction operation using baking app, therefore there is no need of any concern. But to exit the baking app, one needs to enter PIN. This restriction is in place to avoid misuse of physical ledger device when its kept unattended during baking process.
 
 ### Reset High Watermark
 
-When updating the version of Tezos Baking you are using or if you are switching baking to
+When updating the version of Mavryk Baking you are using or if you are switching baking to
  a new ledger device, we recommend setting the HWM to the current head block level of the blockchain.
 This can be accomplished with the reset command. The following command requires an explicit
 confirmation from the user:
 
 ```
-$ octez-client set ledger high watermark for "ledger://<tz...>/" to <HWM>
+$ mavkit-client set ledger high watermark for "ledger://<mv...>/" to <HWM>
 ```
 
 `<HWM>` indicates the new high watermark to reset to. Both the main and test chain HWMs will be
@@ -451,11 +451,11 @@ simultaneously changed to this value.
 If you would like to know the current high watermark of the ledger device, you can run:
 
 ```
-$ octez-client get ledger high watermark for "ledger://<tz...>/"
+$ mavkit-client get ledger high watermark for "ledger://<mv...>/"
 ```
 
 While the ledger device's UI displays the HWM of the main chain it is signing on, it will not
-display the HWM of a test chain it may be signing on during the 3rd period of the Tezos Amendment Process.
+display the HWM of a test chain it may be signing on during the 3rd period of the Mavryk Amendment Process.
 Running this command will return both HWMs as well as the chain ID of the main chain.
 
 ## Upgrading
@@ -464,29 +464,29 @@ When you want to upgrade to a new version, whether you built it yourself from so
 or whether it's a new release of the `app.hex` files, use the same commands as you did
 to originally install it. As the keys are generated from the device's seeds and the
 derivation paths, you will have the same keys with every version of this Ledger hardware wallet app,
-so there is no need to re-import the keys with `octez-client`. You may need to run command `octez-client setup ledger to bake for ...` again as HWM and chain information would be erased after reinstalling the app.
+so there is no need to re-import the keys with `mavkit-client`. You may need to run command `mavkit-client setup ledger to bake for ...` again as HWM and chain information would be erased after reinstalling the app.
 
 ### Special Upgrading Considerations for Bakers
 
-If you've already been baking on an old version of Tezos Baking, the new version will
+If you've already been baking on an old version of Mavryk Baking, the new version will
 not remember which key you are baking with nor the High Watermark. You will have to re-run
 this command to remind the hardware wallet what key you intend to authorize for baking. As shown, it can
 also set the HWM:
 
 ```
-$ octez-client setup ledger to bake for ledger_<...> --main-hwm <HWM>
+$ mavkit-client setup ledger to bake for ledger_<...> --main-hwm <HWM>
 ```
 
 Alternatively, you can also set the High Watermark to the level of the most recently baked block with a separate command:
 
 ```
-$ octez-client set ledger high watermark for "ledger://<tz...>/" to <HWM>
+$ mavkit-client set ledger high watermark for "ledger://<mv...>/" to <HWM>
 ```
 
 The latter will require the correct URL for the Ledger device acquired from:
 
 ```
-$ octez-client list connected ledgers
+$ mavkit-client list connected ledgers
 ```
 
 ## Benchmarking
@@ -506,24 +506,24 @@ or
 ```
 The result will be printed in       `Avg_time_for_100_attestations.txt`.
 
-Following is a sample of measurements obtained with this app (Tezos Baking app v2.4.7, Ledger devices - Nanos, Nanos+, System : Ubunut 22.04)
+Following is a sample of measurements obtained with this app (Mavryk Baking app v2.4.7, Ledger devices - Nanos, Nanos+, System : Ubunut 22.04)
 
 | Device | Derivation Type   | Avg time/signature(milliseconds) |
 |--------|-------------------|----------------------------------|
-| Flex   | SECP256K1_tz2     | 214                              |
-| Flex   | SECP256R1_tz3     | 215                              |
-| Flex   | ED25519_tz1       | 456                              |
-| Flex   | BIP32_ED25519_tz1 | 783                              |
+| Flex   | SECP256K1_mv2     | 214                              |
+| Flex   | SECP256R1_mv3     | 215                              |
+| Flex   | ED25519_mv1       | 456                              |
+| Flex   | BIP32_ED25519_mv1 | 783                              |
 |        |                   |                                  |
-| Nanos+ | SECP256K1_tz2     | 229                              |
-| Nanos+ | SECP256R1_tz3     | 226                              |
-| Nanos+ | ED25519_tz1       | 465                              |
-| Nanos+ | BIP32_ED25519_tz1 | 787                              |
+| Nanos+ | SECP256K1_mv2     | 229                              |
+| Nanos+ | SECP256R1_mv3     | 226                              |
+| Nanos+ | ED25519_mv1       | 465                              |
+| Nanos+ | BIP32_ED25519_mv1 | 787                              |
 |        |                   |                                  |
-| Nanos  | SECP256K1_tz2     | 876                              |
-| Nanos  | SECP256R1_tz3     | 670                              |
-| Nanos  | ED25519_tz1       | 670                              |
-| Nanos  | BIP32_ED25519_tz1 | 878                              |
+| Nanos  | SECP256K1_mv2     | 876                              |
+| Nanos  | SECP256R1_mv3     | 670                              |
+| Nanos  | ED25519_mv1       | 670                              |
+| Nanos  | BIP32_ED25519_mv1 | 878                              |
 
 ## Troubleshooting
 
@@ -538,7 +538,7 @@ You currently cannot directly import a fundraiser account to the Ledger device. 
 ### Two Ledger Devices at the Same Time
 
 Two Ledger devices with the same seed should not ever be plugged in at the same time. This confuses
-`octez-client` and other client programs. Instead, you should plug only one of a set of paired
+`mavkit-client` and other client programs. Instead, you should plug only one of a set of paired
 ledgers at a time. Two Ledger devices of different seeds are fine and are fully supported,
 and the computer will automatically determine which one to send information to.
 
@@ -550,18 +550,18 @@ computer for wallet transactions.
 ### unexpected seq num
 
 ```
-$ octez-client list connected ledgers
+$ mavkit-client list connected ledgers
 Fatal error:                                                                                                                                        Header.check: unexpected seq num
 ```
 
-This means you do not have the Tezos application open on your device.
+This means you do not have the Mavryk application open on your device.
 
 ### No device found
 
 ```
-$ octez-client list connected ledgers
+$ mavkit-client list connected ledgers
 No device found.
-Make sure a Ledger device is connected and in the Tezos Wallet app.
+Make sure a Ledger device is connected and in the Mavryk Wallet app.
 ```
 
 In addition to the possibilities listed in the error message, this could also
@@ -569,22 +569,22 @@ mean that your udev rules are not set up correctly.
 
 ### Unrecognized command
 
-If you see an `Unrecognized command` error, it might be because there is no node for `octez-client`
-to connect to. Please ensure that you are running a node. `ps aux | grep tezos-node` should display
+If you see an `Unrecognized command` error, it might be because there is no node for `mavkit-client`
+to connect to. Please ensure that you are running a node. `ps aux | grep mavryk-node` should display
 the process information for the current node. If it displays nothing, or just displays a `grep`
 command, then there is no node running on your machine.
 
 ### Error "Unexpected sequence number (expected 0, got 191)" on macOS
 
-If `octez-client` on macOS intermittently fails with an error that looks like
+If `mavkit-client` on macOS intermittently fails with an error that looks like
 
 ```
 client.signer.ledger: APDU level error: Unexpected sequence number (expected 0, got 191)
 ```
 
-then your installation of `octez-client` was built with an older version of HIDAPI that doesn't work well with macOS (see [#30](https://github.com/obsidiansystems/ledger-app-tezos/issues/30)).
+then your installation of `mavkit-client` was built with an older version of HIDAPI that doesn't work well with macOS (see [#30](https://github.com/obsidiansystems/ledger-app-tezos/issues/30)).
 
-To fix this you need to get the yet-unreleased fixes from the [HIDAPI library](https://github.com/signal11/hidapi) and rebuild `octez-client`.
+To fix this you need to get the yet-unreleased fixes from the [HIDAPI library](https://github.com/signal11/hidapi) and rebuild `mavkit-client`.
 
 If you got HIDAPI from Homebrew, you can update to the `master` branch of HIDAPI like this:
 
@@ -592,7 +592,7 @@ If you got HIDAPI from Homebrew, you can update to the `master` branch of HIDAPI
 $ brew install hidapi --HEAD
 ```
 
-Then start a full rebuild of `octez-client` with HIDAPI's `master` branch:
+Then start a full rebuild of `mavkit-client` with HIDAPI's `master` branch:
 
 ```shell
 $ brew unlink hidapi   # remove the current one
@@ -600,19 +600,19 @@ $ brew install autoconf automake libtool  # Just keep installing stuff until the
 $ brew install hidapi --HEAD
 ```
 
-Finally, rebuild `ocaml-hidapi` with Tezos. In the `tezos` repository:
+Finally, rebuild `ocaml-hidapi` with Mavryk. In the `mavryk` repository:
 
 ```shell
 $ opam reinstall hidapi
 $ make all build-test
-$ ./octez-client list connected ledgers  # should now work consistently
+$ ./mavkit-client list connected ledgers  # should now work consistently
 ```
 
-Note that you may still see warnings similar to `Unexpected sequence number (expected 0, got 191)` even after this update. The reason is that there is a separate, more cosmetic, issue in `octez-client` itself which has already been fixed but may not be in your branch yet (see the [merge request](https://gitlab.com/tezos/tezos/merge_requests/600)).
+Note that you may still see warnings similar to `Unexpected sequence number (expected 0, got 191)` even after this update. The reason is that there is a separate, more cosmetic, issue in `mavkit-client` itself which has already been fixed but may not be in your branch yet (see the [merge request](https://gitlab.com/mavryk-network/mavryk-protocol/merge_requests/600)).
 
 ### Command Line Installations: "This app is not genuine"
 
-If you install a Ledger application, such as Tezos Wallet or Tezos Baking, outside of Ledger Live you will see the message "This app is not genuine" followed by an Indentifier when opening the app. This message is generated by the device firmware as a warning to the user whenever an application is installed outside Ledger Live. Ledger signs the applications available in Ledger Live to verify their authenticity, but the same applications available elsewhere, such as from this repo, are not signed by Ledger. As a result, the user is warned that the app is not "genuine", i.e. signed by Ledger. This helps protect users who may have accidentally downloaded an app from a malicious client without knowing it. Note that the application available from this repo's [releases page](https://github.com/obsidiansystems/ledger-app-tezos/releases/tag/v2.2.7) is otherwise no different from the one downloaded from Ledger Live.
+If you install a Ledger application, such as Mavryk Wallet or Mavryk Baking, outside of Ledger Live you will see the message "This app is not genuine" followed by an Indentifier when opening the app. This message is generated by the device firmware as a warning to the user whenever an application is installed outside Ledger Live. Ledger signs the applications available in Ledger Live to verify their authenticity, but the same applications available elsewhere, such as from this repo, are not signed by Ledger. As a result, the user is warned that the app is not "genuine", i.e. signed by Ledger. This helps protect users who may have accidentally downloaded an app from a malicious client without knowing it. Note that the application available from this repo's [releases page](https://github.com/obsidiansystems/ledger-app-tezos/releases/tag/v2.2.7) is otherwise no different from the one downloaded from Ledger Live.
 
 ## Feedback
-To give feedback and report an error, create an issue on github repository [Trillitech-App-Tezos](https://github.com/trillitech/ledger-app-tezos-baking).
+To give feedback and report an error, create an issue on github repository [MavrykDynamics-App-Mavryk](https://github.com/mavryk-network/ledger-app-mavryk-baking).

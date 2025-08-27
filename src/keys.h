@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Key handling
+/* Mavryk Ledger application - Key handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -37,7 +37,7 @@
  *   2. `signature_type` represents how a key will be used for signing.
  *      The mapping from `derivation_type` to `signature_type` is injective.
  *      See `derivation_type_to_signature_type`.
- *      This type is parsed from Tezos data headers. See the relevant parsing
+ *      This type is parsed from Mavryk data headers. See the relevant parsing
  *      code for the mapping.
  */
 typedef enum {
@@ -183,7 +183,7 @@ static inline bool bip32_path_with_curve_eq(bip32_path_with_curve_t volatile con
 #define KEY_HASH_SIZE     20u
 #define PK_LEN            65u
 #define COMPRESSED_PK_LEN 33u
-#define TZ_EDPK_LEN       (COMPRESSED_PK_LEN - 1u)
+#define MV_EDPK_LEN       (COMPRESSED_PK_LEN - 1u)
 
 /**
  * @brief This structure represents elliptic curve public key handled
@@ -191,7 +191,7 @@ static inline bool bip32_path_with_curve_eq(bip32_path_with_curve_t volatile con
  */
 typedef union {
     cx_ecfp_256_public_key_t pk_256;  ///< edpk, sppk and p2pk keys
-} tz_ecfp_public_key_t;
+} mv_ecfp_public_key_t;
 
 /**
  * @brief Alias to represent abstract compressed public key
@@ -207,21 +207,21 @@ typedef cx_ecfp_public_key_t cx_ecfp_compressed_public_key_t;
 typedef struct {
     cx_curve_t curve;        ///< Curve identifier
     size_t W_len;            ///< Compressed public key length in bytes
-    uint8_t W[TZ_EDPK_LEN];  ///< Compressed public key value
-} tz_ecfp_ed25519_compressed_public_key_t;
+    uint8_t W[MV_EDPK_LEN];  ///< Compressed public key value
+} mv_ecfp_ed25519_compressed_public_key_t;
 /** Secp256 compressed public key */
 typedef struct {
     cx_curve_t curve;              ///< Curve identifier
     size_t W_len;                  ///< Compressed public key length in bytes
     uint8_t W[COMPRESSED_PK_LEN];  ///< Compressed public key value
-} tz_ecfp_secp256_compressed_public_key_t;
+} mv_ecfp_secp256_compressed_public_key_t;
 /**
  * @brief This structure represents elliptic curve compressed public key handled
  */
 typedef union {
-    tz_ecfp_ed25519_compressed_public_key_t pk_ed25519;  ///< edpk keys
-    tz_ecfp_secp256_compressed_public_key_t pk_secp256;  ///< sppk and p2pk keys
-} tz_ecfp_compressed_public_key_t;
+    mv_ecfp_ed25519_compressed_public_key_t pk_ed25519;  ///< edpk keys
+    mv_ecfp_secp256_compressed_public_key_t pk_secp256;  ///< sppk and p2pk keys
+} mv_ecfp_compressed_public_key_t;
 
 /**
  * @brief Generates a public key from a bip32 path and a curve

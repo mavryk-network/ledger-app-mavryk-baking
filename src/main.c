@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Main
+/* Mavryk Ledger application - Main
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

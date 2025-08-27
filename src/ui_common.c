@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Common UI functions
+/* Mavryk Ledger application - Common UI functions
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

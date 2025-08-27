@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Baking authorizing primitives
+/* Mavryk Ledger application - Baking authorizing primitives
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -34,9 +34,9 @@
  *
  * @param derivation_type: curve of the key
  * @param bip32_path: bip32 path of the key
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-tz_exc authorize_baking(derivation_type_t const derivation_type,
+mv_exc authorize_baking(derivation_type_t const derivation_type,
                         bip32_path_t const *const bip32_path);
 
 /**
@@ -44,9 +44,9 @@ tz_exc authorize_baking(derivation_type_t const derivation_type,
  *
  * @param baking_info: baking info to check
  * @param key: key to check
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-tz_exc guard_baking_authorized(parsed_baking_data_t const *const baking_info,
+mv_exc guard_baking_authorized(parsed_baking_data_t const *const baking_info,
                                bip32_path_with_curve_t const *const key);
 
 /**
@@ -61,9 +61,9 @@ bool is_valid_level(level_t level);
  * @brief Stores baking info into the NVRAM
  *
  * @param in: baking info
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-tz_exc write_high_water_mark(parsed_baking_data_t const *const in);
+mv_exc write_high_water_mark(parsed_baking_data_t const *const in);
 
 /**
  * @brief Parse a block

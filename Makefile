@@ -3,12 +3,12 @@ $(error Environment variable BOLOS_SDK is not set)
 endif
 include $(BOLOS_SDK)/Makefile.defines
 
-APPNAME = "Tezos Baking"
+APPNAME = "Mavryk Baking"
 
 APP_SOURCE_PATH = src
 
 VARIANT_PARAM  = APP
-VARIANT_VALUES = tezos_baking
+VARIANT_VALUES = mavryk_baking
 
 # OPTION
 
@@ -20,7 +20,7 @@ ENABLE_NBGL_QRCODE = 1
 HAVE_APPLICATION_FLAG_GLOBAL_PIN = 1
 
 CURVE_APP_LOAD_PARAMS = ed25519 secp256k1 secp256r1
-PATH_APP_LOAD_PARAMS  = "44'/1729'"
+PATH_APP_LOAD_PARAMS  = "44'/1969'"
 
 # VERSION
 
