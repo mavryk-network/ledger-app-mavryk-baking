@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Screen-saver UI functions
+/* Mavryk Ledger application - Screen-saver UI functions
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

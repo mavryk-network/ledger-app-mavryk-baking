@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Public key BAGL UI handling
+/* Mavryk Ledger application - Public key BAGL UI handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -54,11 +54,11 @@ UX_CONFIRM_FLOW(ux_authorize_flow, &ux_authorize_step, &ux_public_key_hash_step)
 UX_CONFIRM_FLOW(ux_provide_flow, &ux_provide_step, &ux_public_key_hash_step);
 
 int prompt_pubkey(bool authorize, ui_callback_t ok_cb, ui_callback_t cxl_cb) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
     memset(&address_context, 0, sizeof(address_context));
 
-    TZ_CHECK(bip32_path_with_curve_to_pkh_string(address_context.public_key_hash,
+    MV_CHECK(bip32_path_with_curve_to_pkh_string(address_context.public_key_hash,
                                                  sizeof(address_context.public_key_hash),
                                                  &global.path_with_curve));
 

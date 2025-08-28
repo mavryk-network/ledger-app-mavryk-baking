@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Reset UI handling
+/* Mavryk Ledger application - Reset UI handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

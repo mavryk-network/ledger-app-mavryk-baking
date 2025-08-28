@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Reset BAGL UI handling
+/* Mavryk Ledger application - Reset BAGL UI handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -85,13 +85,13 @@ static void cancel_callback(void) {
 
 typedef enum {
     CONFIRM_TOKEN = FIRST_USER_TOKEN
-} tz_resetToken_t;
+} mv_resetToken_t;
 
 /**
  * @brief Callback called during reset flow
  *
  */
-static void resetCallback(tz_resetToken_t token, uint8_t index, int page) {
+static void resetCallback(mv_resetToken_t token, uint8_t index, int page) {
     UNUSED(index);
     UNUSED(page);
     if (token == CONFIRM_TOKEN) {
@@ -108,7 +108,7 @@ static const nbgl_content_t resetContentList[RESET_CONTENT_NB] = {
     .content.centeredInfo = {
       .text1 = "Reset HWM",
       .text3 = "Swipe to review",
-      .icon  = &C_tezos,
+      .icon  = &C_mavryk,
       .style = LARGE_CASE_GRAY_INFO,
     }
   },
@@ -123,7 +123,7 @@ static const nbgl_content_t resetContentList[RESET_CONTENT_NB] = {
     .type = INFO_BUTTON,
     .content.infoButton = {
       .text        = "Confirm HWM reset",
-      .icon        = &C_tezos,
+      .icon        = &C_mavryk,
       .buttonText  = "Approve",
       .buttonToken = CONFIRM_TOKEN
     },
@@ -138,12 +138,12 @@ static const nbgl_genericContents_t resetContents = {
 // clang-format on
 
 int prompt_reset(ui_callback_t const ok_cb, ui_callback_t const cxl_cb) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
     reset_context.ok_cb = ok_cb;
     reset_context.cxl_cb = cxl_cb;
 
-    TZ_ASSERT(
+    MV_ASSERT(
         number_to_string(reset_context.tagValueRef[LEVEL_IDX], MAX_LENGTH, G.reset_level) >= 0,
         EXC_WRONG_LENGTH);
 

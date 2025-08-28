@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Data to string functions
+/* Mavryk Ledger application - Data to string functions
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -29,33 +29,33 @@
 
 #include <string.h>
 
-#define TEZOS_HASH_CHECKSUM_SIZE 4u
+#define MAVRYK_HASH_CHECKSUM_SIZE 4u
 
 static int pkh_to_string(char *const dest,
                          size_t const dest_size,
                          signature_type_t const signature_type,
                          uint8_t const hash[KEY_HASH_SIZE]);
 
-tz_exc bip32_path_with_curve_to_pkh_string(char *const out,
+mv_exc bip32_path_with_curve_to_pkh_string(char *const out,
                                            size_t const out_size,
                                            bip32_path_with_curve_t const *const key) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
     cx_err_t error = CX_OK;
     uint8_t hash[KEY_HASH_SIZE];
 
-    TZ_ASSERT_NOT_NULL(out);
-    TZ_ASSERT_NOT_NULL(key);
+    MV_ASSERT_NOT_NULL(out);
+    MV_ASSERT_NOT_NULL(key);
 
     CX_CHECK(generate_public_key_hash(hash, sizeof(hash), NULL, key));
 
-    TZ_ASSERT(pkh_to_string(out,
+    MV_ASSERT(pkh_to_string(out,
                             out_size,
                             derivation_type_to_signature_type(key->derivation_type),
                             hash) >= 0,
               EXC_WRONG_LENGTH);
 
 end:
-    TZ_CONVERT_CX();
+    MV_CONVERT_CX();
     return exc;
 }
 
@@ -66,13 +66,13 @@ end:
  * @param data: hash input
  * @param size: input size
  */
-static void compute_hash_checksum(uint8_t out[TEZOS_HASH_CHECKSUM_SIZE],
+static void compute_hash_checksum(uint8_t out[MAVRYK_HASH_CHECKSUM_SIZE],
                                   void const *const data,
                                   size_t size) {
     uint8_t checksum[CX_SHA256_SIZE];
     cx_hash_sha256(data, size, checksum, sizeof(checksum));
     cx_hash_sha256(checksum, sizeof(checksum), checksum, sizeof(checksum));
-    memcpy(out, checksum, TEZOS_HASH_CHECKSUM_SIZE);
+    memcpy(out, checksum, MAVRYK_HASH_CHECKSUM_SIZE);
 }
 
 /**
@@ -96,7 +96,7 @@ static int pkh_to_string(char *const dest,
     struct __attribute__((packed)) {
         uint8_t prefix[3];
         uint8_t hash[KEY_HASH_SIZE];
-        uint8_t checksum[TEZOS_HASH_CHECKSUM_SIZE];
+        uint8_t checksum[MAVRYK_HASH_CHECKSUM_SIZE];
     } data;
 
     // prefix
@@ -107,19 +107,19 @@ static int pkh_to_string(char *const dest,
             data.prefix[2] = 121u;
             break;
         case SIGNATURE_TYPE_ED25519:
-            data.prefix[0] = 6u;
-            data.prefix[1] = 161u;
-            data.prefix[2] = 159u;
+            data.prefix[0] = 5u;
+            data.prefix[1] = 186u;
+            data.prefix[2] = 196u;
             break;
         case SIGNATURE_TYPE_SECP256K1:
-            data.prefix[0] = 6u;
-            data.prefix[1] = 161u;
-            data.prefix[2] = 161u;
+            data.prefix[0] = 5u;
+            data.prefix[1] = 186u;
+            data.prefix[2] = 199u;
             break;
         case SIGNATURE_TYPE_SECP256R1:
-            data.prefix[0] = 6u;
-            data.prefix[1] = 161u;
-            data.prefix[2] = 164u;
+            data.prefix[0] = 5u;
+            data.prefix[1] = 186u;
+            data.prefix[2] = 201u;
             break;
         default:
             return -1;
@@ -153,7 +153,7 @@ static int chain_id_to_string(char *const dest,
     struct __attribute__((packed)) {
         uint8_t prefix[3];
         int32_t chain_id;
-        uint8_t checksum[TEZOS_HASH_CHECKSUM_SIZE];
+        uint8_t checksum[MAVRYK_HASH_CHECKSUM_SIZE];
     } data = {.prefix = {87, 82, 0}, .chain_id = chain_id_value};
 
     compute_hash_checksum(data.checksum, &data, sizeof(data) - sizeof(data.checksum));
@@ -244,19 +244,19 @@ int number_to_string(char *const dest, size_t dest_size, uint64_t number) {
     return length;
 }
 
-/// Microtez are in millionths
-#define TEZ_SCALE      1000000u
+/// Micromav are in millionths
+#define MAV_SCALE      1000000u
 #define DECIMAL_DIGITS 6u
 
-int microtez_to_string(char *const dest, size_t dest_size, uint64_t number) {
+int micromav_to_string(char *const dest, size_t dest_size, uint64_t number) {
     if (dest == NULL) {
         return -1;
     }
 
-    uint64_t whole_tez = number / TEZ_SCALE;
-    uint64_t fractional = number % TEZ_SCALE;
+    uint64_t whole_mav = number / MAV_SCALE;
+    uint64_t fractional = number % MAV_SCALE;
 
-    int result = number_to_string(dest, dest_size, whole_tez);
+    int result = number_to_string(dest, dest_size, whole_mav);
     if (result < 0) {
         return result;
     }

@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Public key NBGL UI handling
+/* Mavryk Ledger application - Public key NBGL UI handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -64,24 +64,24 @@ static void confirmation_callback(bool confirm) {
 }
 
 int prompt_pubkey(bool authorize, ui_callback_t ok_cb, ui_callback_t cxl_cb) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
     address_context.ok_cb = ok_cb;
     address_context.cxl_cb = cxl_cb;
 
-    TZ_CHECK(bip32_path_with_curve_to_pkh_string(address_context.buffer,
+    MV_CHECK(bip32_path_with_curve_to_pkh_string(address_context.buffer,
                                                  sizeof(address_context.buffer),
                                                  &global.path_with_curve));
 
     const char* text;
     if (authorize) {
-        text = "Authorize Tezos\nBaking address";
+        text = "Authorize Mavryk\nBaking address";
     } else {
-        text = "Verify Tezos\naddress";
+        text = "Verify Mavryk\naddress";
     }
     nbgl_useCaseAddressReview(address_context.buffer,
                               NULL,
-                              &C_tezos,
+                              &C_mavryk,
                               text,
                               NULL,
                               confirmation_callback);

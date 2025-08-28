@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Setup NBGL UI handling
+/* Mavryk Ledger application - Setup NBGL UI handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -88,13 +88,13 @@ static void cancel_callback(void) {
 
 typedef enum {
     CONFIRM_TOKEN = FIRST_USER_TOKEN
-} tz_setupToken_t;
+} mv_setupToken_t;
 
 /**
  * @brief Callback called during setup flow
  *
  */
-static void setupCallback(tz_setupToken_t token, uint8_t index, int page) {
+static void setupCallback(mv_setupToken_t token, uint8_t index, int page) {
     UNUSED(index);
     UNUSED(page);
     if (token == CONFIRM_TOKEN) {
@@ -111,7 +111,7 @@ static const nbgl_content_t setupContentList[SETUP_CONTENT_NB] = {
     .content.centeredInfo = {
       .text1 = "Setup baking",
       .text3 = "Swipe to review",
-      .icon  = &C_tezos,
+      .icon  = &C_mavryk,
       .style = LARGE_CASE_GRAY_INFO,
     }
   },
@@ -126,7 +126,7 @@ static const nbgl_content_t setupContentList[SETUP_CONTENT_NB] = {
     .type = INFO_BUTTON,
     .content.infoButton = {
       .text        = "Confirm baking setup",
-      .icon        = &C_tezos,
+      .icon        = &C_mavryk,
       .buttonText  = "Approve",
       .buttonToken = CONFIRM_TOKEN
     },
@@ -141,25 +141,25 @@ static const nbgl_genericContents_t setupContents = {
 // clang-format on
 
 int prompt_setup(ui_callback_t const ok_cb, ui_callback_t const cxl_cb) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
     setup_context.ok_cb = ok_cb;
     setup_context.cxl_cb = cxl_cb;
 
-    TZ_CHECK(bip32_path_with_curve_to_pkh_string(setup_context.tagValueRef[ADDRESS_IDX],
+    MV_CHECK(bip32_path_with_curve_to_pkh_string(setup_context.tagValueRef[ADDRESS_IDX],
                                                  MAX_LENGTH,
                                                  &global.path_with_curve));
 
-    TZ_ASSERT(chain_id_to_string_with_aliases(setup_context.tagValueRef[CHAIN_IDX],
+    MV_ASSERT(chain_id_to_string_with_aliases(setup_context.tagValueRef[CHAIN_IDX],
                                               MAX_LENGTH,
                                               &G.main_chain_id) >= 0,
               EXC_WRONG_LENGTH);
 
-    TZ_ASSERT(
+    MV_ASSERT(
         number_to_string(setup_context.tagValueRef[MAIN_HWM_IDX], MAX_LENGTH, G.hwm.main) >= 0,
         EXC_WRONG_LENGTH);
 
-    TZ_ASSERT(
+    MV_ASSERT(
         number_to_string(setup_context.tagValueRef[TEST_HWM_IDX], MAX_LENGTH, G.hwm.test) >= 0,
         EXC_WRONG_LENGTH);
 

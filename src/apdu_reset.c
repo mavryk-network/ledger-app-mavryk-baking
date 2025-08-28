@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Reset APDU instruction handling
+/* Mavryk Ledger application - Reset APDU instruction handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -55,14 +55,14 @@ static bool ok(void) {
  *   + (4 bytes) uint32: reset level
  */
 int handle_reset(buffer_t* cdata) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
-    TZ_ASSERT_NOT_NULL(cdata);
+    MV_ASSERT_NOT_NULL(cdata);
 
-    TZ_ASSERT(buffer_read_u32(cdata, &G.reset_level, BE) && is_valid_level(G.reset_level),
+    MV_ASSERT(buffer_read_u32(cdata, &G.reset_level, BE) && is_valid_level(G.reset_level),
               EXC_WRONG_VALUES);
 
-    TZ_ASSERT(cdata->size == cdata->offset, EXC_WRONG_LENGTH);
+    MV_ASSERT(cdata->size == cdata->offset, EXC_WRONG_LENGTH);
 
     return prompt_reset(ok, reject);
 

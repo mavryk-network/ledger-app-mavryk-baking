@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Memory primitives
+/* Mavryk Ledger application - Memory primitives
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

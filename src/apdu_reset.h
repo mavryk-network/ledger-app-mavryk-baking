@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Reset APDU instruction handling
+/* Mavryk Ledger application - Reset APDU instruction handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

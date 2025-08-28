@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Common apdu primitives
+/* Mavryk Ledger application - Common apdu primitives
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

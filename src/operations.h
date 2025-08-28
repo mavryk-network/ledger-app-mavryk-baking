@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Operation parsing
+/* Mavryk Ledger application - Operation parsing
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -37,7 +37,7 @@
  */
 typedef struct {
     uint8_t v;  ///< value of the type of header signature
-} __attribute__((packed)) raw_tezos_header_signature_type_t;
+} __attribute__((packed)) raw_mavryk_header_signature_type_t;
 
 /**
  * @brief Wire representation of operation group header
@@ -52,7 +52,7 @@ struct operation_group_header {
  *
  */
 struct implicit_contract {
-    raw_tezos_header_signature_type_t signature_type;  ///< type of the contract signature
+    raw_mavryk_header_signature_type_t signature_type;  ///< type of the contract signature
     uint8_t pkh[KEY_HASH_SIZE];                        ///< raw public key hash
 } __attribute__((packed));
 
@@ -61,7 +61,7 @@ struct implicit_contract {
  *
  */
 union public_key {
-    uint8_t edpk[TZ_EDPK_LEN];        ///< raw public key for a edpk key
+    uint8_t edpk[MV_EDPK_LEN];        ///< raw public key for a edpk key
     uint8_t sppk[COMPRESSED_PK_LEN];  ///< raw public key for a sppk key
     uint8_t p2pk[COMPRESSED_PK_LEN];  ///< raw public key for a p2pk key
 } __attribute__((packed));
@@ -71,7 +71,7 @@ union public_key {
  *
  */
 struct delegation_contents {
-    raw_tezos_header_signature_type_t signature_type;  ///< type of the delegate signature
+    raw_mavryk_header_signature_type_t signature_type;  ///< type of the delegate signature
     uint8_t hash[KEY_HASH_SIZE];                       ///< raw delegate
 } __attribute__((packed));
 
@@ -100,7 +100,7 @@ struct nexttype_subparser_state {
 
     /// union of all wire structure
     union {
-        raw_tezos_header_signature_type_t sigtype;  ///< wire signature_type
+        raw_mavryk_header_signature_type_t sigtype;  ///< wire signature_type
 
         struct operation_group_header ogh;  ///< wire operation group header
 
@@ -148,9 +148,9 @@ struct parse_state {
  * @param out: parsing output
  * @param curve: curve of the key
  * @param path_with_curve: bip32 path and curve of the key
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-tz_exc parse_operations(buffer_t *buf,
+mv_exc parse_operations(buffer_t *buf,
                         struct parsed_operation_group *const out,
                         bip32_path_with_curve_t const *const path_with_curve);
 

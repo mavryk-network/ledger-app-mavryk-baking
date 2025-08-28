@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module providing a tezos client."""
+"""Module providing a mavryk client."""
 
 from typing import Tuple, Optional, Generator
 from enum import IntEnum
@@ -22,7 +22,7 @@ from contextlib import contextmanager
 from ragger.utils import RAPDU
 from ragger.backend import BackendInterface
 from ragger.error import ExceptionRAPDU
-from pytezos.michelson import forge
+from pymavryk.michelson import forge
 from utils.account import Account, BipPath, PublicKey, Signature, SigScheme
 from utils.helper import BytesReader
 from utils.message import Message
@@ -188,8 +188,8 @@ class StatusCode(IntEnum):
 
 MAX_APDU_SIZE: int = 235
 
-class TezosClient:
-    """Class representing the tezos app client."""
+class MavrykClient:
+    """Class representing the mavryk app client."""
 
     backend: BackendInterface
 

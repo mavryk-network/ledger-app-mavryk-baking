@@ -213,7 +213,7 @@ If the `message` is a valid `baking message` (`Block` or `Consensus
 operation`), no confirmation screens will be displayed and the
 signature will be automatic.
 
-See [the messages in the specification](signing.md#messages) and the [API](https://tezos.gitlab.io/shell/p2p_api.html).
+See [the messages in the specification](signing.md#messages) and the [API](https://protocol.mavryk.org/shell/p2p_api.html).
 
 ##### Input data
 

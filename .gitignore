@@ -13,3 +13,4 @@ doc/html
 doc/latex
 # Pytest temporary snapshots
 test/snapshots-tmp
+mavryk_test_env

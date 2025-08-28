@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Data to string functions
+/* Mavryk Ledger application - Data to string functions
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -30,7 +30,7 @@
 #include "types.h"
 #include "ui.h"
 
-#define TICKER_WITH_SPACE " XTZ"
+#define TICKER_WITH_SPACE " MVRK"
 
 /**
  * @brief Converts a key to a public key hash string using its bip32 path and curve
@@ -38,9 +38,9 @@
  * @param out: result output
  * @param out_size: output size
  * @param key: bip32 path and curve of the key
- * @return tz_exc: exception, SW_OK if none
+ * @return mv_exc: exception, SW_OK if none
  */
-tz_exc bip32_path_with_curve_to_pkh_string(char *const out,
+mv_exc bip32_path_with_curve_to_pkh_string(char *const out,
                                            size_t const out_size,
                                            bip32_path_with_curve_t const *const key);
 
@@ -69,14 +69,14 @@ int chain_id_to_string_with_aliases(char *const dest,
 int number_to_string(char *const dest, size_t dest_size, uint64_t number);
 
 /**
- * @brief Converts an uint64 number to microtez as string
+ * @brief Converts an uint64 number to micromav as string
  *
  * @param dest: result output
  * @param dest_size: size of the output
  * @param number: number to convert
  * @return int: size of the result, negative integer on failure
  */
-int microtez_to_string(char *const dest, size_t dest_size, uint64_t number);
+int micromav_to_string(char *const dest, size_t dest_size, uint64_t number);
 
 /**
  * @brief Converts a high watermark to string

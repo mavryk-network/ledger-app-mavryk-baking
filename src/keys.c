@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Key handling
+/* Mavryk Ledger application - Key handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -114,13 +114,13 @@ static cx_err_t public_key_hash(uint8_t *const hash_out,
     }
 
     cx_ecfp_compressed_public_key_t *compressed =
-        (cx_ecfp_compressed_public_key_t *) &(tz_ecfp_compressed_public_key_t){0};
+        (cx_ecfp_compressed_public_key_t *) &(mv_ecfp_compressed_public_key_t){0};
 
     switch (derivation_type) {
         case DERIVATION_TYPE_ED25519:
         case DERIVATION_TYPE_BIP32_ED25519: {
             compressed->curve = public_key->curve;
-            compressed->W_len = TZ_EDPK_LEN;
+            compressed->W_len = MV_EDPK_LEN;
             memcpy(compressed->W, public_key->W + 1, compressed->W_len);
             break;
         }
@@ -149,7 +149,7 @@ static cx_err_t public_key_hash(uint8_t *const hash_out,
                               KEY_HASH_SIZE));
 
     if (compressed_out != NULL) {
-        memmove(compressed_out, compressed, sizeof(tz_ecfp_compressed_public_key_t));
+        memmove(compressed_out, compressed, sizeof(mv_ecfp_compressed_public_key_t));
     }
 
 end:
@@ -164,7 +164,7 @@ cx_err_t generate_public_key_hash(uint8_t *const hash_out,
         return CX_INVALID_PARAMETER;
     }
 
-    cx_ecfp_public_key_t *pubkey = (cx_ecfp_public_key_t *) &(tz_ecfp_public_key_t){0};
+    cx_ecfp_public_key_t *pubkey = (cx_ecfp_public_key_t *) &(mv_ecfp_public_key_t){0};
     cx_err_t error = CX_OK;
 
     CX_CHECK(generate_public_key(pubkey, path_with_curve));

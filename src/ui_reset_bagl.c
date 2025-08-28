@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Reset BAGL UI handling
+/* Mavryk Ledger application - Reset BAGL UI handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -51,11 +51,11 @@ UX_STEP_NOCB(ux_reset_level_step, bnnn_paging, {"Reset HWM", reset_context.reset
 UX_CONFIRM_FLOW(ux_reset_flow, &ux_reset_level_step);
 
 int prompt_reset(ui_callback_t const ok_cb, ui_callback_t const cxl_cb) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
     memset(&reset_context, 0, sizeof(reset_context));
 
-    TZ_ASSERT(number_to_string(reset_context.reset_level,
+    MV_ASSERT(number_to_string(reset_context.reset_level,
                                sizeof(reset_context.reset_level),
                                G.reset_level) >= 0,
               EXC_WRONG_LENGTH);

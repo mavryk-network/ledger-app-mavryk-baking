@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Common NBGL UI functions
+/* Mavryk Ledger application - Common NBGL UI functions
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -50,7 +50,7 @@ typedef enum {
     COPYRIGHT_IDX,
     CONTACT_IDX,
     INFO_NB
-} tz_infoIndex_t;
+} mv_infoIndex_t;
 
 static const char* const infoTypes[INFO_NB] =
     {"Chain", "Public Key Hash", "High Watermark", "Version", "Developer", "Copyright", "Contact"};
@@ -67,45 +67,45 @@ static const nbgl_contentInfoList_t infoList = {.nbInfos = INFO_NB,
  * @brief Initializes info values
  */
 static void initInfo(void) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
-    for (tz_infoIndex_t idx = 0; idx < INFO_NB; idx++) {
+    for (mv_infoIndex_t idx = 0; idx < INFO_NB; idx++) {
         infoContents[idx] = infoContentsBridge[idx];
     }
 
-    TZ_ASSERT(chain_id_to_string_with_aliases(infoContentsBridge[CHAIN_IDX],
+    MV_ASSERT(chain_id_to_string_with_aliases(infoContentsBridge[CHAIN_IDX],
                                               MAX_LENGTH,
                                               &g_hwm.main_chain_id) >= 0,
               EXC_WRONG_LENGTH);
 
     if (g_hwm.baking_key.bip32_path.length == 0u) {
-        TZ_ASSERT(copy_string(infoContentsBridge[PKH_IDX], MAX_LENGTH, "No Key Authorized"),
+        MV_ASSERT(copy_string(infoContentsBridge[PKH_IDX], MAX_LENGTH, "No Key Authorized"),
                   EXC_WRONG_LENGTH);
     } else {
-        TZ_CHECK(bip32_path_with_curve_to_pkh_string(infoContentsBridge[PKH_IDX],
+        MV_CHECK(bip32_path_with_curve_to_pkh_string(infoContentsBridge[PKH_IDX],
                                                      MAX_LENGTH,
                                                      &g_hwm.baking_key));
     }
 
-    TZ_ASSERT(hwm_to_string(infoContentsBridge[HWM_IDX], MAX_LENGTH, &g_hwm.hwm.main) >= 0,
+    MV_ASSERT(hwm_to_string(infoContentsBridge[HWM_IDX], MAX_LENGTH, &g_hwm.hwm.main) >= 0,
               EXC_WRONG_LENGTH);
 
-    TZ_ASSERT(copy_string(infoContentsBridge[VERSION_IDX], MAX_LENGTH, APPVERSION) >= 0,
+    MV_ASSERT(copy_string(infoContentsBridge[VERSION_IDX], MAX_LENGTH, APPVERSION) >= 0,
               EXC_WRONG_LENGTH);
 
-    TZ_ASSERT(
+    MV_ASSERT(
         copy_string(infoContentsBridge[DEVELOPER_IDX], MAX_LENGTH, "Trilitech Kanvas Ltd. et al") >=
             0,
         EXC_WRONG_LENGTH);
 
-    TZ_ASSERT(copy_string(infoContentsBridge[COPYRIGHT_IDX], MAX_LENGTH, "(c) 2024 Trilitech") >= 0,
+    MV_ASSERT(copy_string(infoContentsBridge[COPYRIGHT_IDX], MAX_LENGTH, "(c) 2024 Trilitech") >= 0,
               EXC_WRONG_LENGTH);
-    TZ_ASSERT(
-        copy_string(infoContentsBridge[CONTACT_IDX], MAX_LENGTH, "ledger-tezos@trili.tech") >= 0,
+    MV_ASSERT(
+        copy_string(infoContentsBridge[CONTACT_IDX], MAX_LENGTH, "info@mavryk.io") >= 0,
         EXC_WRONG_LENGTH);
 
 end:
-    TZ_EXC_PRINT(exc);
+    MV_EXC_PRINT(exc);
 }
 
 //  -----------------------------------------------------------
@@ -115,14 +115,14 @@ end:
 typedef enum {
     HWM_ENABLED_TOKEN = FIRST_USER_TOKEN,
     NEXT_TOKEN
-} tz_settingsToken_t;
+} mv_settingsToken_t;
 
 //  -------------------- SWITCHES SETTINGS --------------------
 
 typedef enum {
     HWM_ENABLED_IDX = 0,
     SETTINGS_SWITCHES_NB
-} tz_settingsSwitchesIndex_t;
+} mv_settingsSwitchesIndex_t;
 
 static nbgl_contentSwitch_t settingsSwitches[SETTINGS_SWITCHES_NB] = {0};
 
@@ -144,7 +144,7 @@ static void initSettingsSwitches(void) {
  * @param state: switch state
  * @param page: page index
  */
-static void settingsSwitchesToggleCallback(tz_settingsToken_t token, nbgl_state_t state, int page) {
+static void settingsSwitchesToggleCallback(mv_settingsToken_t token, nbgl_state_t state, int page) {
     UNUSED(page);
     if (token == HWM_ENABLED_TOKEN) {
         toggle_hwm();
@@ -165,7 +165,7 @@ static void settingsSwitchesToggleCallback(tz_settingsToken_t token, nbgl_state_
 typedef enum {
     SWITCHES_IDX = 0,
     SETTINGS_PAGE_NB
-} tz_settingsIndex_t;
+} mv_settingsIndex_t;
 
 static const nbgl_content_t settingsContentsList[SETTINGS_PAGE_NB] = {SETTINGS_SWITCHES_CONTENTS};
 
@@ -186,8 +186,8 @@ void ui_initial_screen(void) {
     initSettings();
     initInfo();
 
-    nbgl_useCaseHomeAndSettings("Tezos Baking",
-                                &C_tezos,
+    nbgl_useCaseHomeAndSettings("Mavryk Baking",
+                                &C_mavryk,
                                 NULL,
                                 INIT_HOME_PAGE,
                                 &settingsContents,

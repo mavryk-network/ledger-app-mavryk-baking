@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Types
+/* Mavryk Ledger application - Types
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -43,7 +43,7 @@ typedef enum {
 
 /**
  * @brief magic byte of operations
- * See: https://tezos.gitlab.io/user/key-management.html#signer-requests
+ * See: https://protocol.mavryk.org/user/key-management.html#signer-requests
  */
 typedef enum {
     MAGIC_BYTE_UNSAFE_OP = 0x03u,       /// magic byte of an operation
@@ -55,7 +55,7 @@ typedef enum {
 typedef uint32_t level_t;
 typedef uint32_t round_t;
 
-#define CHAIN_ID_BASE58_STRING_SIZE sizeof("NetXdQprcVkpaWU")
+#define CHAIN_ID_BASE58_STRING_SIZE sizeof("NetXXAAR1wWQhhe")
 
 #define MAX_INT_DIGITS 20u
 
@@ -67,7 +67,7 @@ typedef struct {
     uint32_t v;  ///< value of the chain id
 } chain_id_t;
 
-// Mainnet Chain ID: NetXdQprcVkpaWU
+// Mainnet Chain ID: NetXXAAR1wWQhhe
 static chain_id_t const mainnet_chain_id = {.v = 0x7A06A770};
 
 /**
@@ -165,7 +165,7 @@ struct parsed_operation {
  *
  */
 struct parsed_operation_group {
-    tz_ecfp_compressed_public_key_t public_key;  ///< compressed signer public key
+    mv_ecfp_compressed_public_key_t public_key;  ///< compressed signer public key
     uint64_t total_fee;                          ///< sum of all fees
     uint64_t total_storage_limit;                ///< sum of all storage limits
     bool has_reveal;                             ///< if the bundle contains at least a reveal

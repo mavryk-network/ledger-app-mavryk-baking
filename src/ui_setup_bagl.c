@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Setup BAGL UI handling
+/* Mavryk Ledger application - Setup BAGL UI handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -63,24 +63,24 @@ UX_CONFIRM_FLOW(ux_setup_flow,
                 &ux_test_hwm_step);
 
 int prompt_setup(ui_callback_t const ok_cb, ui_callback_t const cxl_cb) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
     memset(&setup_context, 0, sizeof(setup_context));
 
-    TZ_CHECK(bip32_path_with_curve_to_pkh_string(setup_context.address,
+    MV_CHECK(bip32_path_with_curve_to_pkh_string(setup_context.address,
                                                  sizeof(setup_context.address),
                                                  &global.path_with_curve));
 
-    TZ_ASSERT(chain_id_to_string_with_aliases(setup_context.chain,
+    MV_ASSERT(chain_id_to_string_with_aliases(setup_context.chain,
                                               sizeof(setup_context.chain),
                                               &G.main_chain_id) >= 0,
               EXC_WRONG_LENGTH);
 
-    TZ_ASSERT(
+    MV_ASSERT(
         number_to_string(setup_context.main_hwm, sizeof(setup_context.main_hwm), G.hwm.main) >= 0,
         EXC_WRONG_LENGTH);
 
-    TZ_ASSERT(
+    MV_ASSERT(
         number_to_string(setup_context.test_hwm, sizeof(setup_context.test_hwm), G.hwm.test) >= 0,
         EXC_WRONG_LENGTH);
 

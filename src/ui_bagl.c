@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Common BAGL UI functions
+/* Mavryk Ledger application - Common BAGL UI functions
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>
@@ -152,7 +152,7 @@ UX_STEP_CB(ux_app_is_ready_step, nn, ui_start_screensaver(), {"Application", "is
 #else   // TARGET_NANOS
 UX_STEP_NOCB(ux_app_is_ready_step, nn, {"Application", "is ready"});
 #endif  // TARGET_NANOS
-UX_STEP_NOCB(ux_version_step, bnnn_paging, {"Tezos Baking", APPVERSION});
+UX_STEP_NOCB(ux_version_step, bnnn_paging, {"Mavryk Baking", APPVERSION});
 UX_STEP_NOCB(ux_chain_id_step, bnnn_paging, {"Chain", home_context.chain_id});
 UX_STEP_NOCB(ux_authorized_key_step, bnnn_paging, {"Public Key Hash", home_context.authorized_key});
 UX_STEP_CB(ux_settings_step, pb, ui_settings(), {&C_icon_coggle, "Settings"});
@@ -196,12 +196,12 @@ void ui_toggle_hwm(void) {
     ui_settings();
 }
 
-tz_exc calculate_idle_screen_chain_id(void) {
-    tz_exc exc = SW_OK;
+mv_exc calculate_idle_screen_chain_id(void) {
+    mv_exc exc = SW_OK;
 
     memset(&home_context.chain_id, 0, sizeof(home_context.chain_id));
 
-    TZ_ASSERT(chain_id_to_string_with_aliases(home_context.chain_id,
+    MV_ASSERT(chain_id_to_string_with_aliases(home_context.chain_id,
                                               sizeof(home_context.chain_id),
                                               &g_hwm.main_chain_id) >= 0,
               EXC_WRONG_LENGTH);
@@ -210,18 +210,18 @@ end:
     return exc;
 }
 
-tz_exc calculate_idle_screen_authorized_key(void) {
-    tz_exc exc = SW_OK;
+mv_exc calculate_idle_screen_authorized_key(void) {
+    mv_exc exc = SW_OK;
 
     memset(&home_context.authorized_key, 0, sizeof(home_context.authorized_key));
 
     if (g_hwm.baking_key.bip32_path.length == 0u) {
-        TZ_ASSERT(copy_string(home_context.authorized_key,
+        MV_ASSERT(copy_string(home_context.authorized_key,
                               sizeof(home_context.authorized_key),
                               "No Key Authorized"),
                   EXC_WRONG_LENGTH);
     } else {
-        TZ_CHECK(bip32_path_with_curve_to_pkh_string(home_context.authorized_key,
+        MV_CHECK(bip32_path_with_curve_to_pkh_string(home_context.authorized_key,
                                                      sizeof(home_context.authorized_key),
                                                      &g_hwm.baking_key));
     }
@@ -230,45 +230,45 @@ end:
     return exc;
 }
 
-tz_exc calculate_idle_screen_hwm(void) {
-    tz_exc exc = SW_OK;
+mv_exc calculate_idle_screen_hwm(void) {
+    mv_exc exc = SW_OK;
 
     memset(&home_context.hwm, 0, sizeof(home_context.hwm));
 
-    TZ_ASSERT(hwm_to_string(home_context.hwm, sizeof(home_context.hwm), &g_hwm.hwm.main) >= 0,
+    MV_ASSERT(hwm_to_string(home_context.hwm, sizeof(home_context.hwm), &g_hwm.hwm.main) >= 0,
               EXC_WRONG_LENGTH);
 
 end:
     return exc;
 }
 
-tz_exc calculate_baking_idle_screens_data(void) {
-    tz_exc exc = SW_OK;
+mv_exc calculate_baking_idle_screens_data(void) {
+    mv_exc exc = SW_OK;
 
-    TZ_CHECK(calculate_idle_screen_chain_id());
+    MV_CHECK(calculate_idle_screen_chain_id());
 
-    TZ_CHECK(calculate_idle_screen_authorized_key());
+    MV_CHECK(calculate_idle_screen_authorized_key());
 
-    TZ_CHECK(calculate_idle_screen_hwm());
+    MV_CHECK(calculate_idle_screen_hwm());
 
 end:
     return exc;
 }
 
 void ui_initial_screen(void) {
-    tz_exc exc = SW_OK;
+    mv_exc exc = SW_OK;
 
     // reserve a display stack slot if none yet
     if (G_ux.stack_count == 0) {
         ux_stack_push();
     }
 
-    TZ_CHECK(calculate_baking_idle_screens_data());
+    MV_CHECK(calculate_baking_idle_screens_data());
 
     ui_menu_init();
     return;
 end:
-    TZ_EXC_PRINT(exc);
+    MV_EXC_PRINT(exc);
 }
 
 /**

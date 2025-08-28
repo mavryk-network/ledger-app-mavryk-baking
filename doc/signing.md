@@ -41,7 +41,7 @@ The ledger will refuse to sign:
     `Attestation` has already been signed by the ledger at the same
     level and in the same round or higher.
 - a manager operation if it contains:
-  - operations other than `Reveal` or `Delegation`. A point to note is that you can only set/unset Delegation using baking app. To stake your tez, you need to use tezos-wallet app.
+  - operations other than `Reveal` or `Delegation`. A point to note is that you can only set/unset Delegation using baking app. To stake your mav, you need to use mavryk-wallet app.
   - operations with their source different from the [`authorized-key`](NVRAM.md#authorized-key).
   - a `Reveal` with its revealed key different from the
     [`authorized-key`](NVRAM.md#authorized-key) (More than one `Reveal` can be signed in a

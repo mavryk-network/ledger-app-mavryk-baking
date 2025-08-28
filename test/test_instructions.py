@@ -26,8 +26,8 @@ import pytest
 
 from ledgered.devices import Device, DeviceType
 from ragger.backend import BackendInterface
-from utils.client import TezosClient, Version, Hwm, StatusCode
-from utils.account import Account, PublicKey
+from utils.client import MavrykClient, Version, Hwm, StatusCode
+from utils.account import Account, PublicKey, SigScheme
 from utils.helper import get_current_commit
 from utils.message import (
     Message,
@@ -44,7 +44,7 @@ from utils.message import (
     Default
 )
 from utils.navigator import (
-    TezosNavigator,
+    MavrykNavigator,
     NanoFixedScreen,
     TouchFixedScreen,
     send_and_navigate
@@ -52,7 +52,7 @@ from utils.navigator import (
 from common import (
     DEFAULT_ACCOUNT,
     DEFAULT_ACCOUNT_2,
-    TZ1_ACCOUNTS,
+    MV1_ACCOUNTS,
     ACCOUNTS,
     ZEBRA_ACCOUNTS,
 )
@@ -61,7 +61,7 @@ from common import (
 def test_review_home(account: Optional[Account],
                      backend: BackendInterface,
                      device: Device,
-                     tezos_navigator: TezosNavigator) -> None:
+                     mavryk_navigator: MavrykNavigator) -> None:
     """Test the display of the home/info pages."""
     snap_path = \
         Path("") if account is None else \
@@ -72,7 +72,7 @@ def test_review_home(account: Optional[Account],
         main_hwm = Hwm(1,0)
         test_hwm = Hwm(2,0)
 
-        tezos_navigator.setup_app_context(
+        mavryk_navigator.setup_app_context(
             account,
             main_chain_id,
             main_hwm,
@@ -80,168 +80,168 @@ def test_review_home(account: Optional[Account],
         )
 
     if device.is_nano:
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
-        tezos_navigator.right()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_VERSION)
-        tezos_navigator.right()
-        tezos_navigator.assert_screen("chain_id", snap_path)
-        tezos_navigator.right()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+        mavryk_navigator.right()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_VERSION)
+        mavryk_navigator.right()
+        mavryk_navigator.assert_screen("chain_id", snap_path)
+        mavryk_navigator.right()
         if account is not None and device.type == DeviceType.NANOS:
             for i in range(1, account.nanos_screens + 1):
-                tezos_navigator.assert_screen("public_key_hash_" + str(i), snap_path)
-                tezos_navigator.right()
+                mavryk_navigator.assert_screen("public_key_hash_" + str(i), snap_path)
+                mavryk_navigator.right()
         else:
-            tezos_navigator.assert_screen("public_key_hash", snap_path)
-            tezos_navigator.right()
-        tezos_navigator.assert_screen("high_watermark", snap_path)
-        tezos_navigator.right()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_SETTINGS)
-        tezos_navigator.right()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_QUIT)
-        tezos_navigator.right()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_QUIT)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_SETTINGS)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen("high_watermark", snap_path)
-        tezos_navigator.left()
+            mavryk_navigator.assert_screen("public_key_hash", snap_path)
+            mavryk_navigator.right()
+        mavryk_navigator.assert_screen("high_watermark", snap_path)
+        mavryk_navigator.right()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_SETTINGS)
+        mavryk_navigator.right()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_QUIT)
+        mavryk_navigator.right()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_QUIT)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_SETTINGS)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen("high_watermark", snap_path)
+        mavryk_navigator.left()
         if account is not None and device.type == DeviceType.NANOS:
             for i in reversed(range(1, account.nanos_screens + 1)):
-                tezos_navigator.assert_screen("public_key_hash_" + str(i), snap_path)
-                tezos_navigator.left()
+                mavryk_navigator.assert_screen("public_key_hash_" + str(i), snap_path)
+                mavryk_navigator.left()
         else:
-            tezos_navigator.assert_screen("public_key_hash", snap_path)
-            tezos_navigator.left()
-        tezos_navigator.assert_screen("chain_id", snap_path)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_VERSION)
-        tezos_navigator.right()
-        tezos_navigator.assert_screen("chain_id", snap_path)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_VERSION)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_QUIT)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_SETTINGS)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen("high_watermark", snap_path)
-        tezos_navigator.right()
+            mavryk_navigator.assert_screen("public_key_hash", snap_path)
+            mavryk_navigator.left()
+        mavryk_navigator.assert_screen("chain_id", snap_path)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_VERSION)
+        mavryk_navigator.right()
+        mavryk_navigator.assert_screen("chain_id", snap_path)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_VERSION)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_QUIT)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_SETTINGS)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen("high_watermark", snap_path)
+        mavryk_navigator.right()
         # Check settings menu
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_SETTINGS)
-        tezos_navigator.press_both_buttons()
-        tezos_navigator.assert_screen(NanoFixedScreen.SETTINGS_HMW_ENABLED)
-        tezos_navigator.press_both_buttons()
-        tezos_navigator.assert_screen(NanoFixedScreen.SETTINGS_HMW_DISABLED)
-        tezos_navigator.right()
-        tezos_navigator.assert_screen(NanoFixedScreen.SETTINGS_BACK)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen(NanoFixedScreen.SETTINGS_HMW_DISABLED)
-        tezos_navigator.press_both_buttons()
-        tezos_navigator.assert_screen(NanoFixedScreen.SETTINGS_HMW_ENABLED)
-        tezos_navigator.right()
-        tezos_navigator.assert_screen(NanoFixedScreen.SETTINGS_BACK)
-        tezos_navigator.press_both_buttons()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
-        tezos_navigator.left()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_QUIT)
-        tezos_navigator.right()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
-        tezos_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_SETTINGS)
+        mavryk_navigator.press_both_buttons()
+        mavryk_navigator.assert_screen(NanoFixedScreen.SETTINGS_HMW_ENABLED)
+        mavryk_navigator.press_both_buttons()
+        mavryk_navigator.assert_screen(NanoFixedScreen.SETTINGS_HMW_DISABLED)
+        mavryk_navigator.right()
+        mavryk_navigator.assert_screen(NanoFixedScreen.SETTINGS_BACK)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.SETTINGS_HMW_DISABLED)
+        mavryk_navigator.press_both_buttons()
+        mavryk_navigator.assert_screen(NanoFixedScreen.SETTINGS_HMW_ENABLED)
+        mavryk_navigator.right()
+        mavryk_navigator.assert_screen(NanoFixedScreen.SETTINGS_BACK)
+        mavryk_navigator.press_both_buttons()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+        mavryk_navigator.left()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_QUIT)
+        mavryk_navigator.right()
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+        mavryk_navigator.left()
     else:
         backend.wait_for_home_screen()
-        tezos_navigator.home.settings()
+        mavryk_navigator.home.settings()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_ENABLED)
-        tezos_navigator.settings.next()
-        backend.wait_for_screen_change()
-        if device.type == DeviceType.STAX:
-            # chain_id + pkh + hwm
-            tezos_navigator.assert_screen("app_context", snap_path)
-        elif device.type == DeviceType.FLEX:
-            # chain_id + pkh
-            tezos_navigator.assert_screen("app_context_1", snap_path)
-            tezos_navigator.settings.next()
-            backend.wait_for_screen_change()
-            # hwm + version
-            tezos_navigator.assert_screen("app_context_2", snap_path)
-        tezos_navigator.settings.next()
-        backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION)
-        tezos_navigator.settings.previous()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_ENABLED)
+        mavryk_navigator.settings.next()
         backend.wait_for_screen_change()
         if device.type == DeviceType.STAX:
             # chain_id + pkh + hwm
-            tezos_navigator.assert_screen("app_context", snap_path)
+            mavryk_navigator.assert_screen("app_context", snap_path)
         elif device.type == DeviceType.FLEX:
-            # hwm + version
-            tezos_navigator.assert_screen("app_context_2", snap_path)
-            tezos_navigator.settings.previous()
-            backend.wait_for_screen_change()
             # chain_id + pkh
-            tezos_navigator.assert_screen("app_context_1", snap_path)
-        tezos_navigator.settings.previous()
+            mavryk_navigator.assert_screen("app_context_1", snap_path)
+            mavryk_navigator.settings.next()
+            backend.wait_for_screen_change()
+            # hwm + version
+            mavryk_navigator.assert_screen("app_context_2", snap_path)
+        mavryk_navigator.settings.next()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_ENABLED)
-        tezos_navigator.settings.exit()
-        backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.HOME)
-        tezos_navigator.home.settings()
-        backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_ENABLED)
-        tezos_navigator.settings.toggle_hwm_status()
-        backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_DISABLED)
-        tezos_navigator.settings.next()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION)
+        mavryk_navigator.settings.previous()
         backend.wait_for_screen_change()
         if device.type == DeviceType.STAX:
             # chain_id + pkh + hwm
-            tezos_navigator.assert_screen("app_context", snap_path)
+            mavryk_navigator.assert_screen("app_context", snap_path)
         elif device.type == DeviceType.FLEX:
-            # chain_id + pkh
-            tezos_navigator.assert_screen("app_context_1", snap_path)
-            tezos_navigator.settings.next()
-            backend.wait_for_screen_change()
             # hwm + version
-            tezos_navigator.assert_screen("app_context_2", snap_path)
-        tezos_navigator.settings.next()
+            mavryk_navigator.assert_screen("app_context_2", snap_path)
+            mavryk_navigator.settings.previous()
+            backend.wait_for_screen_change()
+            # chain_id + pkh
+            mavryk_navigator.assert_screen("app_context_1", snap_path)
+        mavryk_navigator.settings.previous()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION)
-        tezos_navigator.settings.next()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_ENABLED)
+        mavryk_navigator.settings.exit()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION_2)
-        tezos_navigator.settings.previous()
+        mavryk_navigator.assert_screen(TouchFixedScreen.HOME)
+        mavryk_navigator.home.settings()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION)
-        tezos_navigator.settings.previous()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_ENABLED)
+        mavryk_navigator.settings.toggle_hwm_status()
+        backend.wait_for_screen_change()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_DISABLED)
+        mavryk_navigator.settings.next()
         backend.wait_for_screen_change()
         if device.type == DeviceType.STAX:
             # chain_id + pkh + hwm
-            tezos_navigator.assert_screen("app_context", snap_path)
+            mavryk_navigator.assert_screen("app_context", snap_path)
+        elif device.type == DeviceType.FLEX:
+            # chain_id + pkh
+            mavryk_navigator.assert_screen("app_context_1", snap_path)
+            mavryk_navigator.settings.next()
+            backend.wait_for_screen_change()
+            # hwm + version
+            mavryk_navigator.assert_screen("app_context_2", snap_path)
+        mavryk_navigator.settings.next()
+        backend.wait_for_screen_change()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION)
+        mavryk_navigator.settings.next()
+        backend.wait_for_screen_change()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION_2)
+        mavryk_navigator.settings.previous()
+        backend.wait_for_screen_change()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_DESCRIPTION)
+        mavryk_navigator.settings.previous()
+        backend.wait_for_screen_change()
+        if device.type == DeviceType.STAX:
+            # chain_id + pkh + hwm
+            mavryk_navigator.assert_screen("app_context", snap_path)
         elif device.type == DeviceType.FLEX:
             # hwm + version
-            tezos_navigator.assert_screen("app_context_2", snap_path)
-            tezos_navigator.settings.previous()
+            mavryk_navigator.assert_screen("app_context_2", snap_path)
+            mavryk_navigator.settings.previous()
             backend.wait_for_screen_change()
             # chain_id + pkh
-            tezos_navigator.assert_screen("app_context_1", snap_path)
-        tezos_navigator.settings.previous()
+            mavryk_navigator.assert_screen("app_context_1", snap_path)
+        mavryk_navigator.settings.previous()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_DISABLED)
-        tezos_navigator.settings.toggle_hwm_status()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_DISABLED)
+        mavryk_navigator.settings.toggle_hwm_status()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_ENABLED)
-        tezos_navigator.settings.exit()
+        mavryk_navigator.assert_screen(TouchFixedScreen.SETTINGS_HMW_ENABLED)
+        mavryk_navigator.settings.exit()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(TouchFixedScreen.HOME)
+        mavryk_navigator.assert_screen(TouchFixedScreen.HOME)
 
 
 def test_low_cost_screensaver(device: Device,
                               backend: BackendInterface,
-                              tezos_navigator: TezosNavigator) -> None:
+                              mavryk_navigator: MavrykNavigator) -> None:
     """Test if the low-cost screensaver work as intended."""
 
     if device.type != DeviceType.NANOS:
@@ -252,19 +252,19 @@ def test_low_cost_screensaver(device: Device,
         backend.left_click,
         backend.right_click,
     ]
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
     for click in all_click:
         backend.both_click()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_BLACK)
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_BLACK)
         click()
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+        mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
 def test_automatic_low_cost_screensaver(device: Device,
                                         backend: BackendInterface,
-                                        client: TezosClient,
-                                        tezos_navigator: TezosNavigator) -> None:
+                                        client: MavrykClient,
+                                        mavryk_navigator: MavrykNavigator) -> None:
     """Test the low-cost screensaver activate at sign."""
 
     if device.type != DeviceType.NANOS:
@@ -272,19 +272,19 @@ def test_automatic_low_cost_screensaver(device: Device,
 
     account = DEFAULT_ACCOUNT
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID,
         Hwm(0, 0),
         Hwm(0, 0)
     )
 
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
     time.sleep(30)
 
     # Low-cost screensaver activate only after signing
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
     attestation = build_attestation(
         op_level=1,
@@ -297,28 +297,28 @@ def test_automatic_low_cost_screensaver(device: Device,
     time.sleep(5)
 
     # Low-cost screensaver activate after 20s after signing
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
     time.sleep(30)
 
     # Low-cost screensaver has been activated
     backend.wait_for_screen_change()
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_BLACK)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_BLACK)
 
     backend.both_click()
     backend.wait_for_screen_change()
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
     time.sleep(30)
 
     # Low-cost screensaver deactivate after button push
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
 def test_automatic_low_cost_screensaver_cancelled_by_display(
         device: Device,
         backend: BackendInterface,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test that low-cost screensaver is cancelled by display"""
 
     if device.type != DeviceType.NANOS:
@@ -326,7 +326,7 @@ def test_automatic_low_cost_screensaver_cancelled_by_display(
 
     account = DEFAULT_ACCOUNT
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID,
         Hwm(0, 0),
@@ -344,21 +344,21 @@ def test_automatic_low_cost_screensaver_cancelled_by_display(
     time.sleep(5)
 
     # Low-cost screensaver activate after 20s after signing
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
     def delayed_authorize_navigate(**kwargs):
         time.sleep(30)
 
         # Low-cost screensaver deactivate after something is displayed.
         backend.wait_for_screen_change()
-        tezos_navigator.assert_screen("first_authorize_screen")
+        mavryk_navigator.assert_screen("first_authorize_screen")
 
-        tezos_navigator.accept_key_navigate(
+        mavryk_navigator.accept_key_navigate(
             screen_change_before_first_instruction=False,
             **kwargs
         )
 
-    tezos_navigator.authorize_baking(
+    mavryk_navigator.authorize_baking(
         account,
         navigate=delayed_authorize_navigate
     )
@@ -366,8 +366,8 @@ def test_automatic_low_cost_screensaver_cancelled_by_display(
 def test_automatic_low_cost_screensaver_exited_by_display(
         device: Device,
         backend: BackendInterface,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test that low-cost screensaver is exited by display"""
 
     if device.type != DeviceType.NANOS:
@@ -375,7 +375,7 @@ def test_automatic_low_cost_screensaver_exited_by_display(
 
     account = DEFAULT_ACCOUNT
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID,
         Hwm(0, 0),
@@ -393,23 +393,23 @@ def test_automatic_low_cost_screensaver_exited_by_display(
     time.sleep(5)
 
     # Low-cost screensaver activate after 20s after signing
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
     time.sleep(30)
 
     # Low-cost screensaver has been activated
     backend.wait_for_screen_change()
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_BLACK)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_BLACK)
 
     # Exit the low-cost screensaver by display
-    tezos_navigator.authorize_baking(account, snap_path=Path("authorize"))
+    mavryk_navigator.authorize_baking(account, snap_path=Path("authorize"))
 
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
     time.sleep(30)
 
     # Low-cost screensaver deactivate after display
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
     attestation = build_attestation(
         op_level=2,
@@ -422,26 +422,26 @@ def test_automatic_low_cost_screensaver_exited_by_display(
     time.sleep(5)
 
     # Low-cost screensaver activate after 20s after signing
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_WELCOME)
 
     time.sleep(30)
 
     # Low-cost screensaver has been activated
     backend.wait_for_screen_change()
-    tezos_navigator.assert_screen(NanoFixedScreen.HOME_BLACK)
+    mavryk_navigator.assert_screen(NanoFixedScreen.HOME_BLACK)
 
 
-def test_version(client: TezosClient) -> None:
+def test_version(client: MavrykClient) -> None:
     """Test the VERSION instruction."""
 
-    expected_version = Version(Version.AppKind.BAKING, 2, 5, 1)
+    expected_version = Version(Version.AppKind.BAKING, 1, 0, 0)
 
     version = client.version()
 
     assert version == expected_version, \
         f"Expected {expected_version} but got {version}"
 
-def test_git(client: TezosClient) -> None:
+def test_git(client: MavrykClient) -> None:
     """Test the GIT instruction."""
 
     expected_commit = get_current_commit()
@@ -453,8 +453,8 @@ def test_git(client: TezosClient) -> None:
 
 
 def test_ledger_screensaver(device: Device,
-                            client: TezosClient,
-                            tezos_navigator: TezosNavigator,
+                            client: MavrykClient,
+                            mavryk_navigator: MavrykNavigator,
                             backend_name) -> None:
     """Test the ledger's screensaver.
 
@@ -479,7 +479,7 @@ def test_ledger_screensaver(device: Device,
     main_hwm = Hwm(lvl, 0)
     test_hwm = Hwm(0, 0)
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -504,8 +504,8 @@ def test_ledger_screensaver(device: Device,
 
 @pytest.mark.parametrize("account", ZEBRA_ACCOUNTS)
 def test_benchmark_attestation_time(account: Account,
-                                    client: TezosClient,
-                                    tezos_navigator: TezosNavigator,
+                                    client: MavrykClient,
+                                    mavryk_navigator: MavrykNavigator,
                                     backend_name) -> None:
     """Benchmark attestation signing time.
 
@@ -522,7 +522,7 @@ def test_benchmark_attestation_time(account: Account,
     main_hwm = Hwm(lvl, 0)
     test_hwm = Hwm(0, 0)
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -550,18 +550,18 @@ def test_benchmark_attestation_time(account: Account,
 
 
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_authorize_baking(account: Account, tezos_navigator: TezosNavigator) -> None:
+def test_authorize_baking(account: Account, mavryk_navigator: MavrykNavigator) -> None:
     """Test the AUTHORIZE_BAKING instruction."""
     snap_path = Path(f"{account}")
 
-    data = tezos_navigator.authorize_baking(account, snap_path=snap_path)
+    data = mavryk_navigator.authorize_baking(account, snap_path=snap_path)
 
     public_key = PublicKey.from_bytes(data, account.sig_scheme)
 
     assert account.public_key == public_key, \
         f"Expected public key {account.public_key} but got {public_key}"
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=Default.CHAIN_ID,
         main_hwm=Hwm(0, 0),
@@ -571,16 +571,16 @@ def test_authorize_baking(account: Account, tezos_navigator: TezosNavigator) -> 
 
 def test_deauthorize(device: Device,
                      backend: BackendInterface,
-                     client: TezosClient,
-                     tezos_navigator: TezosNavigator) -> None:
+                     client: MavrykClient,
+                     mavryk_navigator: MavrykNavigator) -> None:
     """Test the DEAUTHORIZE instruction."""
 
     account = DEFAULT_ACCOUNT
 
-    tezos_navigator.authorize_baking(account)
+    mavryk_navigator.authorize_baking(account)
 
-    with tezos_navigator.goto_home_public_key():
-        tezos_navigator.assert_screen("authorized_key_before_authorize")
+    with mavryk_navigator.goto_home_public_key():
+        mavryk_navigator.assert_screen("authorized_key_before_authorize")
 
         client.deauthorize()
 
@@ -590,9 +590,9 @@ def test_deauthorize(device: Device,
         if device.type == DeviceType.NANOS:
             # Wait blink
             time.sleep(0.5)
-        tezos_navigator.assert_screen("authorized_key_after_authorize")
+        mavryk_navigator.assert_screen("authorized_key_after_authorize")
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         None,
         chain_id=Default.CHAIN_ID,
         main_hwm=Hwm(0, 0),
@@ -602,11 +602,11 @@ def test_deauthorize(device: Device,
 @pytest.mark.parametrize("account", ACCOUNTS)
 def test_get_auth_key(
         account: Account,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the QUERY_AUTH_KEY instruction."""
 
-    tezos_navigator.authorize_baking(account)
+    mavryk_navigator.authorize_baking(account)
 
     path = client.get_auth_key()
 
@@ -616,11 +616,11 @@ def test_get_auth_key(
 @pytest.mark.parametrize("account", ACCOUNTS)
 def test_get_auth_key_with_curve(
         account: Account,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the QUERY_AUTH_KEY_WITH_CURVE instruction."""
 
-    tezos_navigator.authorize_baking(account)
+    mavryk_navigator.authorize_baking(account)
 
     sig_scheme, path = client.get_auth_key_with_curve()
 
@@ -631,12 +631,12 @@ def test_get_auth_key_with_curve(
         f"Expected {account.sig_scheme.name} but got {sig_scheme.name}"
 
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_get_public_key_baking(account: Account, tezos_navigator: TezosNavigator) -> None:
+def test_get_public_key_baking(account: Account, mavryk_navigator: MavrykNavigator) -> None:
     """Test the AUTHORIZE_BAKING instruction."""
 
-    tezos_navigator.authorize_baking(account)
+    mavryk_navigator.authorize_baking(account)
 
-    data = tezos_navigator.authorize_baking(None, snap_path=Path(f"{account}"))
+    data = mavryk_navigator.authorize_baking(None, snap_path=Path(f"{account}"))
 
     public_key = PublicKey.from_bytes(data, account.sig_scheme)
 
@@ -645,7 +645,7 @@ def test_get_public_key_baking(account: Account, tezos_navigator: TezosNavigator
 
 
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_get_public_key_silent(account: Account, client: TezosClient) -> None:
+def test_get_public_key_silent(account: Account, client: MavrykClient) -> None:
     """Test the GET_PUBLIC_KEY instruction."""
 
     public_key = client.get_public_key_silent(account)
@@ -655,23 +655,23 @@ def test_get_public_key_silent(account: Account, client: TezosClient) -> None:
 
 
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_get_public_key_prompt(account: Account, tezos_navigator: TezosNavigator) -> None:
+def test_get_public_key_prompt(account: Account, mavryk_navigator: MavrykNavigator) -> None:
     """Test the PROMPT_PUBLIC_KEY instruction."""
 
-    public_key = tezos_navigator.get_public_key_prompt(account, snap_path=Path(f"{account}"))
+    public_key = mavryk_navigator.get_public_key_prompt(account, snap_path=Path(f"{account}"))
 
     assert account.public_key == public_key, \
         f"Expected public key {account.public_key} but got {public_key}"
 
 
-def test_reset_app_context(tezos_navigator: TezosNavigator) -> None:
+def test_reset_app_context(mavryk_navigator: MavrykNavigator) -> None:
     """Test the RESET instruction."""
 
     reset_level: int = 1
 
-    tezos_navigator.reset_app_context(reset_level, snap_path=Path(""))
+    mavryk_navigator.reset_app_context(reset_level, snap_path=Path(""))
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         None,
         chain_id=Default.CHAIN_ID,
         main_hwm=Hwm(reset_level, 0),
@@ -680,7 +680,7 @@ def test_reset_app_context(tezos_navigator: TezosNavigator) -> None:
 
 
 @pytest.mark.parametrize("account", ACCOUNTS)
-def test_setup_app_context(account: Account, tezos_navigator: TezosNavigator) -> None:
+def test_setup_app_context(account: Account, mavryk_navigator: MavrykNavigator) -> None:
     """Test the SETUP instruction."""
     snap_path = Path(f"{account}")
 
@@ -688,7 +688,7 @@ def test_setup_app_context(account: Account, tezos_navigator: TezosNavigator) ->
     main_hwm = Hwm(1, 0)
     test_hwm = Hwm(2, 0)
 
-    public_key = tezos_navigator.setup_app_context(
+    public_key = mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -699,7 +699,7 @@ def test_setup_app_context(account: Account, tezos_navigator: TezosNavigator) ->
     assert account.public_key == public_key, \
         f"Expected public key {account.public_key} but got {public_key}"
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=main_chain_id,
         main_hwm=main_hwm,
@@ -710,15 +710,15 @@ def test_setup_app_context(account: Account, tezos_navigator: TezosNavigator) ->
 @pytest.mark.parametrize("account", ACCOUNTS)
 def test_get_main_hwm(
         account: Account,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the QUERY_MAIN_HWM instruction."""
 
     main_chain_id = Default.CHAIN_ID
     main_hwm = Hwm(0, 0)
     test_hwm = Hwm(0, 0)
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -734,15 +734,15 @@ def test_get_main_hwm(
 @pytest.mark.parametrize("account", ACCOUNTS)
 def test_get_all_hwm(
         account: Account,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the QUERY_ALL_HWM instruction."""
 
     main_chain_id = Default.CHAIN_ID
     main_hwm = Hwm(0, 0)
     test_hwm = Hwm(0, 0)
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -804,8 +804,8 @@ def test_sign_preattestation(
         with_hash: bool,
         device: Device,
         backend: BackendInterface,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the SIGN(_WITH_HASH) instruction on preattestation."""
     snap_path = Path(f"{account}")
 
@@ -813,7 +813,7 @@ def test_sign_preattestation(
     main_hwm = Hwm(0, 0)
     test_hwm = Hwm(0, 0)
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -826,8 +826,8 @@ def test_sign_preattestation(
         chain_id=main_chain_id
     )
 
-    with tezos_navigator.goto_home_hwm():
-        tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
+    with mavryk_navigator.goto_home_hwm():
+        mavryk_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
         if not with_hash:
             signature = client.sign_message(account, preattestation)
@@ -838,15 +838,15 @@ def test_sign_preattestation(
                 f"Expected hash {preattestation.hash.hex()} but got {preattestation_hash.hex()}"
             account.check_signature(signature, bytes(preattestation))
 
-        tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
+        mavryk_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
         if device.is_nano:
             # No update for Stax or flex
             backend.both_click()
             backend.wait_for_screen_change()
-        tezos_navigator.assert_screen("hwm_after_sign", snap_path=snap_path)
+        mavryk_navigator.assert_screen("hwm_after_sign", snap_path=snap_path)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=main_chain_id,
         main_hwm=Hwm(1, 2),
@@ -861,8 +861,8 @@ def test_sign_attestation(
         with_hash: bool,
         device: Device,
         backend: BackendInterface,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the SIGN(_WITH_HASH) instruction on attestation."""
     snap_path = Path(f"{account}")
 
@@ -870,7 +870,7 @@ def test_sign_attestation(
     main_hwm = Hwm(0, 0)
     test_hwm = Hwm(0, 0)
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -883,8 +883,8 @@ def test_sign_attestation(
         chain_id=main_chain_id
     )
 
-    with tezos_navigator.goto_home_hwm():
-        tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
+    with mavryk_navigator.goto_home_hwm():
+        mavryk_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
         if not with_hash:
             signature = client.sign_message(account, attestation)
@@ -895,15 +895,15 @@ def test_sign_attestation(
                 f"Expected hash {attestation.hash.hex()} but got {attestation_hash.hex()}"
             account.check_signature(signature, bytes(attestation))
 
-        tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
+        mavryk_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
         if device.is_nano:
             # No update for Stax or flex
             backend.both_click()
             backend.wait_for_screen_change()
-        tezos_navigator.assert_screen("hwm_after_sign", snap_path=snap_path)
+        mavryk_navigator.assert_screen("hwm_after_sign", snap_path=snap_path)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=main_chain_id,
         main_hwm=Hwm(1, 2),
@@ -918,8 +918,8 @@ def test_sign_attestation_dal(
         with_hash: bool,
         device: Device,
         backend: BackendInterface,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the SIGN(_WITH_HASH) instruction on attestation."""
     snap_path = Path(f"{account}")
 
@@ -927,7 +927,7 @@ def test_sign_attestation_dal(
     main_hwm = Hwm(0, 0)
     test_hwm = Hwm(0, 0)
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -940,8 +940,8 @@ def test_sign_attestation_dal(
         chain_id=main_chain_id
     )
 
-    with tezos_navigator.goto_home_hwm():
-        tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
+    with mavryk_navigator.goto_home_hwm():
+        mavryk_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
         if not with_hash:
             signature = client.sign_message(account, attestation)
@@ -952,15 +952,15 @@ def test_sign_attestation_dal(
                 f"Expected hash {attestation.hash.hex()} but got {attestation_hash.hex()}"
             account.check_signature(signature, bytes(attestation))
 
-        tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
+        mavryk_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
         if device.is_nano:
             # No update for Stax or flex
             backend.both_click()
             backend.wait_for_screen_change()
-        tezos_navigator.assert_screen("hwm_after_sign", snap_path=snap_path)
+        mavryk_navigator.assert_screen("hwm_after_sign", snap_path=snap_path)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=main_chain_id,
         main_hwm=Hwm(1, 2),
@@ -975,8 +975,8 @@ def test_sign_block(
         with_hash: bool,
         device: Device,
         backend: BackendInterface,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the SIGN(_WITH_HASH) instruction on block."""
     snap_path = Path(f"{account}")
 
@@ -984,7 +984,7 @@ def test_sign_block(
     main_hwm = Hwm(0, 0)
     test_hwm = Hwm(0, 0)
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -997,8 +997,8 @@ def test_sign_block(
         chain_id=main_chain_id
     )
 
-    with tezos_navigator.goto_home_hwm():
-        tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
+    with mavryk_navigator.goto_home_hwm():
+        mavryk_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
         if not with_hash:
             signature = client.sign_message(account, block)
@@ -1009,15 +1009,15 @@ def test_sign_block(
                 f"Expected hash {block.hash.hex()} but got {block_hash.hex()}"
             account.check_signature(signature, bytes(block))
 
-        tezos_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
+        mavryk_navigator.assert_screen("hwm_before_sign", snap_path=snap_path)
 
         if device.is_nano:
             # No update for Stax or flex
             backend.both_click()
             backend.wait_for_screen_change()
-        tezos_navigator.assert_screen("hwm_after_sign", snap_path=snap_path)
+        mavryk_navigator.assert_screen("hwm_after_sign", snap_path=snap_path)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=main_chain_id,
         main_hwm=Hwm(1, 2),
@@ -1025,7 +1025,7 @@ def test_sign_block(
     )
 
 
-def test_sign_block_at_reset_level(client: TezosClient, tezos_navigator: TezosNavigator) -> None:
+def test_sign_block_at_reset_level(client: MavrykClient, mavryk_navigator: MavrykNavigator) -> None:
     """Test that signing block at reset level fails."""
 
     account = DEFAULT_ACCOUNT
@@ -1036,7 +1036,7 @@ def test_sign_block_at_reset_level(client: TezosClient, tezos_navigator: TezosNa
     main_hwm = Hwm(reset_level, 0)
     test_hwm = Hwm(0, 0)
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm,
@@ -1088,8 +1088,8 @@ def test_sign_level_authorized(
         message_builder_2: Callable[[int, int, str], Message],
         level_round_2: Tuple[int, int],
         success: bool,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test whether the level/round constraints behave as expected."""
 
     account: Account = DEFAULT_ACCOUNT
@@ -1097,7 +1097,7 @@ def test_sign_level_authorized(
     main_chain_id = Default.CHAIN_ID
     main_level = 1
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm=Hwm(main_level, 0),
@@ -1131,11 +1131,11 @@ def test_sign_level_authorized(
 def test_sign_delegation(
         account: Account,
         with_hash: bool,
-        tezos_navigator: TezosNavigator) -> None:
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the SIGN(_WITH_HASH) instruction on delegation."""
     snap_path = Path(f"{account}")
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID,
         main_hwm=Hwm(0, 0),
@@ -1148,7 +1148,7 @@ def test_sign_delegation(
     )
 
     if not with_hash:
-        signature = tezos_navigator.sign_delegation(
+        signature = mavryk_navigator.sign_delegation(
             account,
             delegation,
             snap_path=snap_path
@@ -1156,7 +1156,7 @@ def test_sign_delegation(
         account.check_signature(signature, bytes(delegation))
     else:
         delegation_hash, signature = \
-            tezos_navigator.sign_delegation_with_hash(
+            mavryk_navigator.sign_delegation_with_hash(
                 account,
                 delegation,
                 snap_path=snap_path
@@ -1178,13 +1178,13 @@ PARAMETERS_SIGN_DELEGATION_FEES = [
 @pytest.mark.parametrize("fee", PARAMETERS_SIGN_DELEGATION_FEES)
 def test_sign_delegation_fee(
         fee: int,
-        tezos_navigator: TezosNavigator) -> None:
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test fee display on delegation."""
 
     account = DEFAULT_ACCOUNT
     snap_path = Path(f"fee_{fee}")
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID,
         main_hwm=Hwm(0, 0),
@@ -1197,7 +1197,7 @@ def test_sign_delegation_fee(
         fee=fee,
     )
 
-    tezos_navigator.sign_delegation(
+    mavryk_navigator.sign_delegation(
             account,
             delegation,
             snap_path=snap_path
@@ -1239,10 +1239,10 @@ def test_sign_delegation_constraints(
         source_account: Account,
         signer_account: Account,
         status_code: StatusCode,
-        tezos_navigator: TezosNavigator) -> None:
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test delegation signing constraints."""
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         setup_account,
         Default.CHAIN_ID,
         main_hwm=Hwm(0, 0),
@@ -1255,7 +1255,7 @@ def test_sign_delegation_constraints(
     )
 
     with status_code.expected():
-        tezos_navigator.sign_delegation(
+        mavryk_navigator.sign_delegation(
             signer_account,
             delegation
         )
@@ -1266,11 +1266,11 @@ def test_sign_delegation_constraints(
 def test_sign_reveal(
         account: Account,
         with_hash: bool,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test the SIGN(_WITH_HASH) instruction on reveal."""
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID,
         main_hwm=Hwm(0, 0),
@@ -1337,11 +1337,11 @@ def test_sign_reveal_constraints(
         source_account: Account,
         signer_account: Account,
         status_code: StatusCode,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test reveal signing constraints."""
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         setup_account,
         Default.CHAIN_ID,
         main_hwm=Hwm(0, 0),
@@ -1361,8 +1361,8 @@ def test_sign_reveal_constraints(
 
 
 def test_sign_not_authorized_key(
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Check that signing with a key different from the authorized key is not authorized."""
 
     account_1 = DEFAULT_ACCOUNT
@@ -1370,7 +1370,7 @@ def test_sign_not_authorized_key(
 
     main_chain_id = Default.CHAIN_ID
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account_1,
         main_chain_id,
         main_hwm=Hwm(0, 0),
@@ -1384,8 +1384,8 @@ def test_sign_not_authorized_key(
 
 
 def test_sign_transaction(
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Check that signing a transaction is not allowed."""
 
     account_1 = DEFAULT_ACCOUNT
@@ -1393,7 +1393,7 @@ def test_sign_transaction(
 
     main_chain_id = Default.CHAIN_ID
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account_1,
         main_chain_id,
         main_hwm=Hwm(0, 0),
@@ -1498,13 +1498,13 @@ def test_sign_multiple_operation(
         operation_builder_3: Optional[Callable[[Account], ManagerOperation]],
         status_code: StatusCode,
         operation_display: bool,
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Test multiple operations signing constraints."""
 
     account = DEFAULT_ACCOUNT
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID,
         main_hwm=Hwm(0, 0),
@@ -1526,7 +1526,7 @@ def test_sign_multiple_operation(
                     account,
                     operation
                 ),
-                navigate=tezos_navigator.accept_sign_navigate
+                navigate=mavryk_navigator.accept_sign_navigate
             )
         else:
             signature = client.sign_message(
@@ -1537,15 +1537,15 @@ def test_sign_multiple_operation(
 
 
 def test_sign_when_hwm_disabled(
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Check that signing, when HWM is disabled, changes the main HWM."""
 
     account = DEFAULT_ACCOUNT
 
-    tezos_navigator.disable_hwm()
+    mavryk_navigator.disable_hwm()
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID,  # Chain = 0
         main_hwm=Hwm(0, 0),
@@ -1559,7 +1559,7 @@ def test_sign_when_hwm_disabled(
 
     client.sign_message(account, attestation)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=Default.CHAIN_ID,
         main_hwm=Hwm(1, 0),
@@ -1573,7 +1573,7 @@ def test_sign_when_hwm_disabled(
 
     client.sign_message(account, attestation)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=Default.CHAIN_ID,
         main_hwm=Hwm(2, 0),
@@ -1588,7 +1588,7 @@ def test_sign_when_hwm_disabled(
     with StatusCode.WRONG_VALUES.expected():
         client.sign_message(account, attestation)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=Default.CHAIN_ID,
         main_hwm=Hwm(2, 0),
@@ -1597,8 +1597,8 @@ def test_sign_when_hwm_disabled(
 
 
 @pytest.mark.parametrize("exit_style", ["abruptly", "properly"])
-def test_hwm_disabled_exit(client: TezosClient,
-                           tezos_navigator: TezosNavigator,
+def test_hwm_disabled_exit(client: MavrykClient,
+                           mavryk_navigator: MavrykNavigator,
                            exit_style, backend_name) -> None:
     """On device test to verify HWM settings operation. Can run the
        test with hwm setting enabled or disabled.  When HWM is
@@ -1622,7 +1622,7 @@ def test_hwm_disabled_exit(client: TezosClient,
     if hwm_input.find("y") != -1:
         hwm_disabled = True
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID,  # Chain = 0
         main_hwm = Hwm(0, 0),
@@ -1632,7 +1632,7 @@ def test_hwm_disabled_exit(client: TezosClient,
         attestation = build_attestation(i, 0, Default.CHAIN_ID)
         client.sign_message(account, attestation)
     main_hwm = Hwm(10,0)
-    received_main_hwm = tezos_navigator.client.get_main_hwm()
+    received_main_hwm = mavryk_navigator.client.get_main_hwm()
     assert received_main_hwm == main_hwm, \
         f"Expected main hmw {main_hwm} but got {received_main_hwm}"
 
@@ -1651,13 +1651,13 @@ def test_hwm_disabled_exit(client: TezosClient,
 
 
 def test_sign_when_no_chain_setup(
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Check that signing when no chain has been setup change main HWM."""
 
     account = DEFAULT_ACCOUNT
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         Default.CHAIN_ID, # Chain = 0
         main_hwm=Hwm(0, 0),
@@ -1671,7 +1671,7 @@ def test_sign_when_no_chain_setup(
 
     client.sign_message(account, attestation)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=Default.CHAIN_ID,
         main_hwm=Hwm(1, 0),
@@ -1685,7 +1685,7 @@ def test_sign_when_no_chain_setup(
 
     client.sign_message(account, attestation)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=Default.CHAIN_ID,
         main_hwm=Hwm(2, 0),
@@ -1700,7 +1700,7 @@ def test_sign_when_no_chain_setup(
     with StatusCode.WRONG_VALUES.expected():
         client.sign_message(account, attestation)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=Default.CHAIN_ID,
         main_hwm=Hwm(2, 0),
@@ -1709,14 +1709,14 @@ def test_sign_when_no_chain_setup(
 
 
 def test_sign_when_chain_is_setup(
-        client: TezosClient,
-        tezos_navigator: TezosNavigator) -> None:
+        client: MavrykClient,
+        mavryk_navigator: MavrykNavigator) -> None:
     """Check that signing when chain has been setup change main HWM."""
 
     account = DEFAULT_ACCOUNT
     main_chain_id = "NetXH12AexHqTQa" # Chain = 1
 
-    tezos_navigator.setup_app_context(
+    mavryk_navigator.setup_app_context(
         account,
         main_chain_id,
         main_hwm=Hwm(0, 0),
@@ -1730,7 +1730,7 @@ def test_sign_when_chain_is_setup(
 
     client.sign_message(account, attestation)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=main_chain_id,
         main_hwm=Hwm(1, 0),
@@ -1744,7 +1744,7 @@ def test_sign_when_chain_is_setup(
 
     client.sign_message(account, attestation)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=main_chain_id,
         main_hwm=Hwm(1, 0),
@@ -1759,7 +1759,7 @@ def test_sign_when_chain_is_setup(
     with StatusCode.WRONG_VALUES.expected():
         client.sign_message(account, attestation)
 
-    tezos_navigator.check_app_context(
+    mavryk_navigator.check_app_context(
         account,
         chain_id=main_chain_id,
         main_hwm=Hwm(1, 0),
@@ -1782,13 +1782,16 @@ HMAC_TEST_SET = [
     ("0123456789abcdef0123456789abcdef0123456789abcdef")
 ]
 
-# This HMAC test don't pass with tz2 and tz3
-@pytest.mark.parametrize("account", TZ1_ACCOUNTS)
+# This HMAC test don't pass with mv2 and mv3
+# BIP32 accounts can't be used for HMAC because private keys are stored securely on device
+MV1_ACCOUNTS_WITHOUT_BIP32 = [acc for acc in MV1_ACCOUNTS if acc.sig_scheme != SigScheme.BIP32_ED25519]
+
+@pytest.mark.parametrize("account", MV1_ACCOUNTS_WITHOUT_BIP32)
 @pytest.mark.parametrize("message_hex", HMAC_TEST_SET)
 def test_hmac(
         account: Account,
         message_hex: str,
-        client: TezosClient) -> None:
+        client: MavrykClient) -> None:
     """Test the HMAC instruction."""
 
     message = bytes.fromhex(message_hex)

@@ -23,8 +23,8 @@ import pysodium
 import secp256k1
 import fastecdsa
 
-import pytezos
-from pytezos.crypto.encoding import base58_encode
+import pymavryk
+from pymavryk.crypto.encoding import base58_encode
 from bip_utils.bip.bip32.bip32_path import Bip32Path, Bip32PathParser
 from bip_utils.bip.bip32.bip32_key_data import Bip32KeyIndex
 from utils.helper import BytesReader
@@ -195,7 +195,7 @@ class Account:
             BipPath.from_bytes(path) if isinstance(path, bytes) else \
             path
         self.sig_scheme: SigScheme = sig_scheme
-        self.key: pytezos.Key = pytezos.pytezos.using(key=key).key
+        self.key: pymavryk.Key = pymavryk.pymavryk.using(key=key).key
         self.nanos_screens: int = nanos_screens
 
     @property

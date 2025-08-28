@@ -1,4 +1,4 @@
-/* Tezos Ledger application - Get public key handling
+/* Mavryk Ledger application - Get public key handling
 
    Copyright 2024 TriliTech <contact@trili.tech>
    Copyright 2024 Functori <contact@functori.com>

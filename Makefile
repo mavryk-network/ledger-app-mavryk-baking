@@ -3,12 +3,12 @@ $(error Environment variable BOLOS_SDK is not set)
 endif
 include $(BOLOS_SDK)/Makefile.defines
 
-APPNAME = "Tezos Baking"
+APPNAME = "Mavryk Baking"
 
 APP_SOURCE_PATH = src
 
 VARIANT_PARAM  = APP
-VARIANT_VALUES = tezos_baking
+VARIANT_VALUES = mavryk_baking
 
 # OPTION
 
@@ -20,13 +20,13 @@ ENABLE_NBGL_QRCODE = 1
 HAVE_APPLICATION_FLAG_GLOBAL_PIN = 1
 
 CURVE_APP_LOAD_PARAMS = ed25519 secp256k1 secp256r1
-PATH_APP_LOAD_PARAMS  = "44'/1729'"
+PATH_APP_LOAD_PARAMS  = "44'/1969'"
 
 # VERSION
 
-APPVERSION_M=2
-APPVERSION_N=5
-APPVERSION_P=1
+APPVERSION_M=1
+APPVERSION_N=0
+APPVERSION_P=0
 APPVERSION=$(APPVERSION_M).$(APPVERSION_N).$(APPVERSION_P)
 
 # COMMIT
@@ -54,11 +54,11 @@ endif
 
 # ICONS
 
-ICON_NANOS  = icons/nanos_app_tezos.gif
-ICON_NANOX  = icons/nanox_app_tezos.gif
+ICON_NANOS  = icons/nanos_app_mavryk.png
+ICON_NANOX  = icons/nanox_app_mavryk.png
 ICON_NANOSP = $(ICON_NANOX)
-ICON_STAX   = icons/stax_app_tezos.gif
-ICON_FLEX   = icons/flex_app_tezos.gif
+ICON_STAX   = icons/stax_app_mavryk.png
+ICON_FLEX   = icons/flex_app_mavryk.png
 
 ################
 # Default rule #
