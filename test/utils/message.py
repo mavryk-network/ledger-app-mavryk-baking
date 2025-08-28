@@ -21,10 +21,10 @@ from typing import Any, Dict, List, Optional, Union
 
 import base58
 
-from pytezos.block.forge import forge_block_header, forge_int_fixed
-from pytezos.crypto.encoding import base58_encodings
-from pytezos.crypto.key import blake2b_32
-from pytezos.michelson.forge import (
+from pymavryk.block.forge import forge_block_header, forge_int_fixed
+from pymavryk.crypto.encoding import base58_encodings
+from pymavryk.crypto.key import blake2b_32
+from pymavryk.michelson.forge import (
     forge_address,
     forge_base58,
     forge_int16,
@@ -34,10 +34,10 @@ from pytezos.michelson.forge import (
     forge_array,
     # forge_public_key, # overrode until BLS key included
 )
-from pytezos.operation.content import ContentMixin, format_mutez
-from pytezos.operation.forge import forge_tag
-# from pytezos.operation.group import OperationGroup
-from pytezos.rpc.kind import operation_tags
+from pymavryk.operation.content import ContentMixin, format_mumav
+from pymavryk.operation.forge import forge_tag
+# from pymavryk.operation.group import OperationGroup
+from pymavryk.rpc.kind import operation_tags
 
 class Message(ABC):
     """Class representing a message."""
@@ -112,7 +112,7 @@ class Default:
     CHAIN_ID: str                = "NetXH12Aer3be93"
     CONTEXT_HASH: str            = "CoUeJrcPBj3T3iJL3PY4jZHnmZa5rRZ87VQPdSBNBcwZRMWJGh9j"
     ED25519_PUBLIC_KEY: str      = 'edpkteDwHwoNPB18tKToFKeSCykvr1ExnoMV5nawTJy9Y9nLTfQ541'
-    ED25519_PUBLIC_KEY_HASH: str = 'tz1Ke2h7sDdakHJQh8WX4Z372du1KChsksyU'
+    ED25519_PUBLIC_KEY_HASH: str = 'mv18CRQYCeexc2pHEgQhR8SzRGBowmkqPScb'
     ENTRYPOINT: str              = 'default'
     OPERATIONS_HASH: str         = "LLoZKi1iMzbeJrfrGWPFYmkLebcsha6vGskQ4rAXt2uMwQtBfRcjL"
     TIMESTAMP: str               = "1970-01-01T00:00:00-00:00"
@@ -123,7 +123,7 @@ class Default:
         VALUE: Micheline = {'prim': 'Unit'}
 
 class OperationBuilder(ContentMixin):
-    """Extends and fix pytezos.operation.content.ContentMixin."""
+    """Extends and fix pymavryk.operation.content.ContentMixin."""
 
     def reveal(
             self,
@@ -134,12 +134,12 @@ class OperationBuilder(ContentMixin):
             fee: int = 0,
             gas_limit: int = 0,
             storage_limit: int = 0):
-        """Build a Tezos reveal."""
-        # Same as Pytezos but with a proof field
+        """Build a Mavryk reveal."""
+        # Same as Pymavryk but with a proof field
         content = {
             'kind': 'reveal',
             'source': source,
-            'fee': format_mutez(fee),
+            'fee': format_mumav(fee),
             'counter': str(counter),
             'gas_limit': str(gas_limit),
             'storage_limit': str(storage_limit),
@@ -157,7 +157,7 @@ class OperationBuilder(ContentMixin):
             op_level: int = 0,
             op_round: int = 0,
             block_payload_hash: str = Default.BLOCK_PAYLOAD_HASH):
-        """Build a tezos preattestation."""
+        """Build a mavryk preattestation."""
         return self.operation(
             {
                 'kind': 'preattestation',
@@ -175,7 +175,7 @@ class OperationBuilder(ContentMixin):
             op_round: int = 0,
             block_payload_hash: str = Default.BLOCK_PAYLOAD_HASH,
             dal_attestation: Optional[int] = None):
-        """Build a tezos attestation."""
+        """Build a mavryk attestation."""
         kind = 'attestation' if dal_attestation is None \
             else 'attestation_with_dal'
         content = {
@@ -213,8 +213,8 @@ def forge_public_key(value: str) -> bytes:
     raise ValueError(f'Unrecognized key type: #{prefix}')
 
 class OperationForge:
-    """Extends and fix pytezos.operation.forge."""
-    import pytezos.operation.forge as operation
+    """Extends and fix pymavryk.operation.forge."""
+    import pymavryk.operation.forge as operation
 
     operation_tags['preattestation'] = 20
     operation_tags['attestation'] = 21
@@ -225,9 +225,9 @@ class OperationForge:
 
     @staticmethod
     def reveal(content: Dict[str, Any]) -> bytes:
-        """Forge a tezos reveal."""
+        """Forge a mavryk reveal."""
         res = forge_tag(operation_tags[content['kind']])
-        res += forge_address(content['source'], tz_only=True)
+        res += forge_address(content['source'], mv_only=True)
         res += forge_nat(int(content['fee']))
         res += forge_nat(int(content['counter']))
         res += forge_nat(int(content['gas_limit']))
@@ -242,7 +242,7 @@ class OperationForge:
 
     @staticmethod
     def preattestation(content: Dict[str, Any]) -> bytes:
-        """Forge a tezos preattestation."""
+        """Forge a mavryk preattestation."""
         res = forge_tag(operation_tags[content['kind']])
         res += forge_int16(content['slot'])
         res += forge_int32(content['level'])
@@ -252,7 +252,7 @@ class OperationForge:
 
     @staticmethod
     def attestation(content: Dict[str, Any]) -> bytes:
-        """Forge a tezos attestation."""
+        """Forge a mavryk attestation."""
         res = forge_tag(operation_tags[content['kind']])
         res += forge_int16(content['slot'])
         res += forge_int32(content['level'])
@@ -263,7 +263,7 @@ class OperationForge:
         return res
 
 class Operation(Message, OperationBuilder):
-    """Class representing a tezos operation."""
+    """Class representing a mavryk operation."""
 
     branch: str
 
@@ -289,7 +289,7 @@ class Operation(Message, OperationBuilder):
         return raw
 
 class ManagerOperation(Operation):
-    """Class representing a tezos manager operation."""
+    """Class representing a mavryk manager operation."""
 
     source: str
     fee: int
@@ -316,7 +316,7 @@ class ManagerOperation(Operation):
         Operation.__init__(self, *args, **kwargs)
 
 class OperationGroup(Operation):
-    """Class representing a group of tezos manager operation."""
+    """Class representing a group of mavryk manager operation."""
 
     operations: List[ManagerOperation]
 
@@ -332,7 +332,7 @@ class OperationGroup(Operation):
         return b''.join(map(lambda op: op.forge(), self.operations))
 
 class Reveal(ManagerOperation):
-    """Class representing a tezos reveal."""
+    """Class representing a mavryk reveal."""
 
     public_key: str
     proof: Optional[str]
@@ -359,7 +359,7 @@ class Reveal(ManagerOperation):
         )
 
 class Delegation(ManagerOperation):
-    """Class representing a tezos delegation."""
+    """Class representing a mavryk delegation."""
 
     delegate: Optional[str]
 
@@ -382,7 +382,7 @@ class Delegation(ManagerOperation):
         )
 
 class Transaction(ManagerOperation):
-    """Class representing a tezos transaction."""
+    """Class representing a mavryk transaction."""
 
     destination: str
     amount: int
@@ -417,7 +417,7 @@ class Transaction(ManagerOperation):
         )
 
 class Preattestation(Operation):
-    """Class representing a tezos preattestation."""
+    """Class representing a mavryk preattestation."""
 
     slot: int
     op_level: int
@@ -456,7 +456,7 @@ class Preattestation(Operation):
         )
 
 class Attestation(Operation):
-    """Class representing a tezos attestation."""
+    """Class representing a mavryk attestation."""
 
     slot: int
     op_level: int
@@ -517,7 +517,7 @@ class Fitness:
         self.current_round     = current_round
 
     def build(self):
-        """Build a tezos fitness."""
+        """Build a mavryk fitness."""
         raw_locked_round = \
             b'' if self.locked_round is None else \
             forge_int32(self.locked_round)
@@ -565,7 +565,7 @@ class BlockHeader:
         self.protocol_data = protocol_data
 
     def build(self):
-        """Build a tezos Block header."""
+        """Build a mavryk Block header."""
         return {
             'level': self.level,
             'proto': self.proto,

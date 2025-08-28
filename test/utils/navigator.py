@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module providing a tezos navigator."""
+"""Module providing a mavryk navigator."""
 
 from pathlib import Path
 from typing import TypeVar, Callable, Optional, Tuple, Union, Generator
@@ -44,7 +44,7 @@ from ragger.firmware.touch.positions import (
 from ragger.navigator import Navigator, NavInsID, NavIns
 
 from common import TESTS_ROOT_DIR, EMPTY_PATH
-from utils.client import TezosClient, Hwm
+from utils.client import MavrykClient, Hwm
 from utils.account import Account
 from utils.message import Delegation
 
@@ -155,8 +155,8 @@ class UseCaseSettings(OriginalUseCaseSettings):
         self.multi_page_exit()
 
 
-class TezosNavigator(metaclass=MetaScreen):
-    """Class representing the tezos app navigator."""
+class MavrykNavigator(metaclass=MetaScreen):
+    """Class representing the mavryk app navigator."""
 
     use_case_home       = UseCaseHome
     use_case_settings   = UseCaseSettings
@@ -170,7 +170,7 @@ class TezosNavigator(metaclass=MetaScreen):
 
     backend:   BackendInterface
     device:    Device
-    client:    TezosClient
+    client:    MavrykClient
     navigator: Navigator
 
     _golden_run:        bool
@@ -180,7 +180,7 @@ class TezosNavigator(metaclass=MetaScreen):
     def __init__(self,
                  backend: BackendInterface,
                  device: Device,
-                 client: TezosClient,
+                 client: MavrykClient,
                  navigator: Navigator,
                  golden_run: bool,
                  test_name: str) -> None:

@@ -21,8 +21,8 @@ from ledgered.devices import Device
 from ragger.backend import BackendInterface
 from ragger.conftest import configuration
 from ragger.navigator import Navigator
-from utils.client import TezosClient
-from utils.navigator import TezosNavigator
+from utils.client import MavrykClient
+from utils.navigator import MavrykNavigator
 from common import DEFAULT_SEED
 
 configuration.OPTIONAL.CUSTOM_SEED = DEFAULT_SEED
@@ -31,17 +31,17 @@ configuration.OPTIONAL.CUSTOM_SEED = DEFAULT_SEED
 pytest_plugins = ("ragger.conftest.base_conftest", )
 
 @pytest.fixture(scope="function")
-def client(backend: BackendInterface) -> TezosClient:
-    """Get a tezos client."""
-    return TezosClient(backend)
+def client(backend: BackendInterface) -> MavrykClient:
+    """Get a mavryk client."""
+    return MavrykClient(backend)
 
 @pytest.fixture(scope="function")
-def tezos_navigator(
+def mavryk_navigator(
         backend: BackendInterface,
         device: Device,
-        client: TezosClient,
+        client: MavrykClient,
         navigator: Navigator,
         golden_run: bool,
-        test_name: str) -> TezosNavigator:
-    """Get a tezos navigator."""
-    return TezosNavigator(backend, device, client, navigator, golden_run, test_name)
+        test_name: str) -> MavrykNavigator:
+    """Get a mavryk navigator."""
+    return MavrykNavigator(backend, device, client, navigator, golden_run, test_name)

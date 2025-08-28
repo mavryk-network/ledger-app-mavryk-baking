@@ -1,6 +1,9 @@
 base58
 bip32
+bip_utils @ git+https://github.com/mavryk-network/bip_utils@mavryk-integration
 GitPython
 secp256k1
-pytezos==3.13.5
+pymavryk @ git+https://github.com/mavryk-network/pymavryk@v3.14.0-rc1
 ragger[speculos,ledgerwallet]==1.39.0
+jupyter-client>=8.0.0
+jsonschema>=4.18.0

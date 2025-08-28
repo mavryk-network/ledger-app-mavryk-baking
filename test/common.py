@@ -22,66 +22,67 @@ TESTS_ROOT_DIR = Path(__file__).parent
 
 DEFAULT_SEED = " ".join(['zebra'] * 24)
 
-TZ1_ACCOUNT = Account(
-    "m/44'/1729'/0'/0'",
+MV1_ACCOUNT = Account(
+    "m/44'/1969'/0'/0'",
     SigScheme.ED25519,
-    "edsk2tUyhVvGj9B1S956ZzmaU4bC9J7t8xVBH52fkAoZL25MHEwacd",
+    "edsk3j9sL3fqqgTa25t74q4wWC1RsgfNSkmKZKVNQhh8ZazZneLzMZ",
     2
 )
 
-TZ2_ACCOUNT = Account(
-    "m/44'/1729'/0'/0'",
+MV2_ACCOUNT = Account(
+    "m/44'/1969'/0'/0'",
     SigScheme.SECP256K1,
-    "spsk2Pfx9chqXVbz2tW7ze4gGU4RfaiK3nSva77bp69zHhFho2zTze",
+    "spsk3LvLaRN69uTDb6E3nkp8p1FkY6HVEoW1StaDZ5kBTkipDZTF3V",
     3
 )
 
-TZ3_ACCOUNT = Account(
-    "m/44'/1729'/0'/0'",
+MV3_ACCOUNT = Account(
+    "m/44'/1969'/0'/0'",
     SigScheme.SECP256R1,
-    "p2sk2zPCmKo6zTSjPbDHnLiHtPAqVRFrExN3oTvKGbu3C99Jyeyura",
+    "p2sk3eAnsDAZNfHTXYtuwajdnxyE3n1swGknAJi5StPBAiCeu5CbhS",
     3
 )
 
-BIP32_TZ1_ACCOUNT = Account(
-    "m/44'/1729'/0'/0'",
+BIP32_MV1_ACCOUNT = Account(
+    "m/44'/1969'/0'/0'",
     SigScheme.BIP32_ED25519,
-    "edsk2oM2vowLX6m5wtTnkBNK3PCPL2rTow1U4MQmxZiQtJQc65KP5i",
+    # Private key can't be retrieved because it's securely stored on the device
+    "edpkuPErh5Lga9Ui39JPgfCHq2utQjGtKb3ig5NwM8yFnaetY1xD9f",
     2
 )
 
-LONG_TZ1_ACCOUNT = Account(
+LONG_MV1_ACCOUNT = Account(
     "m/9'/12'/13'/8'/78'",
     SigScheme.ED25519,
     "edsk3eZBgFAf1VtdibfxoCcihxXje9S3th7jdEgVA2kHG82EKYNKNm",
     3
 )
 
-DEFAULT_ACCOUNT = TZ1_ACCOUNT
+DEFAULT_ACCOUNT = MV1_ACCOUNT
 
-DEFAULT_ACCOUNT_2 = TZ2_ACCOUNT
+DEFAULT_ACCOUNT_2 = MV2_ACCOUNT
 
-TZ1_ACCOUNTS = [
-    TZ1_ACCOUNT,
-    LONG_TZ1_ACCOUNT,
-    BIP32_TZ1_ACCOUNT,
+MV1_ACCOUNTS = [
+    MV1_ACCOUNT,
+    LONG_MV1_ACCOUNT,
+    BIP32_MV1_ACCOUNT,
 ]
 
-TZ2_ACCOUNTS = [
-    TZ2_ACCOUNT,
+MV2_ACCOUNTS = [
+    MV2_ACCOUNT,
 ]
 
-TZ3_ACCOUNTS = [
-    TZ3_ACCOUNT,
+MV3_ACCOUNTS = [
+    MV3_ACCOUNT,
 ]
 
-ACCOUNTS = TZ1_ACCOUNTS + TZ2_ACCOUNTS + TZ3_ACCOUNTS
+ACCOUNTS = MV1_ACCOUNTS + MV2_ACCOUNTS + MV3_ACCOUNTS
 
 ZEBRA_ACCOUNTS = [
-    TZ1_ACCOUNT,
-    TZ2_ACCOUNT,
-    TZ3_ACCOUNT,
-    BIP32_TZ1_ACCOUNT,
+    MV1_ACCOUNT,
+    MV2_ACCOUNT,
+    MV3_ACCOUNT,
+    BIP32_MV1_ACCOUNT,
 ]
 
 EMPTY_PATH = BipPath.from_string("m")
