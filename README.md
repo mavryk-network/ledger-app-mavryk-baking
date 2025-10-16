@@ -147,7 +147,7 @@ The application tests are run using same docker container used for building. Ins
 $ apt install libgmp-dev libsodium-dev -y;
 $ python3 -m venv mavryk_test_env --system-site-package;
 $ source ./mavryk_test_env/bin/activate;
-(mavryk_test_env)$ python3 -m pip install -r test/requirements.txt -q --use-deprecated=legacy-resolver;
+(mavryk_test_env)$ python3 -m pip install -r test/requirements.txt -c test/constraints.txt -q --use-deprecated=legacy-resolver;
 ```
 Now you can run ragger tests for any perticular ledger device. Please make sure you have built the app.elf files for that perticular device first. Then run following command:
 ```
