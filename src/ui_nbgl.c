@@ -100,9 +100,8 @@ static void initInfo(void) {
 
     MV_ASSERT(copy_string(infoContentsBridge[COPYRIGHT_IDX], MAX_LENGTH, "(c) 2024 Trilitech") >= 0,
               EXC_WRONG_LENGTH);
-    MV_ASSERT(
-        copy_string(infoContentsBridge[CONTACT_IDX], MAX_LENGTH, "info@mavryk.io") >= 0,
-        EXC_WRONG_LENGTH);
+    MV_ASSERT(copy_string(infoContentsBridge[CONTACT_IDX], MAX_LENGTH, "info@mavryk.io") >= 0,
+              EXC_WRONG_LENGTH);
 
 end:
     MV_EXC_PRINT(exc);
