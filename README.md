@@ -165,115 +165,73 @@ Note the `-s` flag which is required when running interactive tests with pytest.
 
 ### Installing the apps onto your Ledger device without Ledger Live
 
-Manually installing the apps requires a command-line tool called LedgerBlue
+Sideloading uses `ledgerctl`, part of the `ledgerwallet` Python package.
 
-### Installing BOLOS Python Loader
+### Prerequisites
 
-Install `libusb` and `libudev`, with the relevant headers. On Debian-based
-distros, including Ubuntu, the packages with the headers are suffixed with
-`-dev`. Other distros will have their own conventions. So, for example, on
-Ubuntu, you can do this with:
+Install `ledgerwallet` and `pyelftools`:
 
 ```
-$ sudo apt-get install libusb-1.0.0-dev libudev-dev # Ubuntu example
-```
-Then, you must enter the `env`. If you do not successfully enter the `env`,
-future commands will fail. You can tell you have entered the virtualenv when your prompt is
-prefixed with `(ledger)`. Use the following command to enter `env`.
-
-```
-$ source env/bin/activate
+$ pip3 install ledgerwallet pyelftools
 ```
 
-Your terminal session -- and only that terminal session -- will now be in the
-virtual env. To have a new terminal session enter the virtualenv, run the above
-`source` command only in the same directory in the new terminal session.
+On Linux, you also need udev rules so the device is accessible without root.
+Create `/etc/udev/rules.d/20-ledger.rules` with:
 
-### ledgerblue: The Python Module for Ledger Nano S/X
-
-We can now install `ledgerblue`, which is a Python module designed originally for
-Ledger Blue, but also is needed for the Ledger Nano S/X.
 ```
-$ python3 -m pip install ledgerblue
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", MODE="0660", TAG+="uaccess"
 ```
 
-[Python package](https://pypi.org/project/ledgerblue/).
-This will install the Ledger Python packages into the virtualenv; they will be
-available only in a shell where the virtualenv has been activated.
-
-If you have to use `sudo` or `pip3` here, that is an indication that you have
-not correctly set up `virtualenv`. It will still work in such a situation, but
-please research other material on troubleshooting `virtualenv` setup.
+Then reload: `sudo udevadm control --reload-rules && sudo udevadm trigger`
 
 ### Load the application onto the Ledger device
 
-Next you'll use the installation script to install the application on your Ledger device.
+Make sure you have built the appropriate device files by following the 'Building'
+section. The build outputs (`app.elf`, `app.hex`) are in `build/<device>/bin/`.
+Here `<device>` can be `nanos`, `nanos2` (Nano S+), `nanox`, `stax`, or `flex`.
 
 The Ledger device must be in the following state:
 
-  * Plugged into your computer
+  * Plugged into your computer via USB
   * Unlocked (enter your PIN)
-  * On the home screen (do not have any application open)
-  * Not asleep (you should not see Ledger screensaver across the
-    screen)
+  * On the home screen (no application open)
 
-If you are already in an application or the Ledger device is asleep, your installation process
-will fail.
-
-We recommend staying at your computer and keeping an eye on the Ledger device's screen
-as you continue. You may want to read the rest of these instructions before you
-begin installing, as you will need to confirm and verify a few things during the
-process.
-
-Make sure you have built the appropriate device files by following the 'Building' section. We will be using the `app.apdu` and `app.elf` from `build/<device>` directory.  Here `<device>` can take values nanos, nanos2 (for Nanosp), nanox, stax and flex.
-```
-$ python3 -m ledgerblue.runScript  --scp --fileName build/<device>/bin/app.apdu --elfFile build/<device>/bin/app.elf
-```
-
-The first thing that should come up in your terminal is a message that looks
-like this:
+Run the following commands (replace `nanos2` with your device if different):
 
 ```
-Generated random root public key : <long string of digits and letters>
+$ ledgerctl delete "Mavryk Baking" || true
+$ python3 scripts/prepare_load.py build/nanos2/bin 0x33100004 icons/nanox_app_mavryk.png
+$ cd build/nanos2/bin && ledgerctl install app.toml
 ```
 
-Look at your Ledger device's screen and verify that the digits of that key match the
-digits you can see on your terminal. What you see on your Ledger hardware wallet's screen
-should be just the beginning and ending few characters of the longer string that
-printed in your terminal.
+Target IDs for other devices:
 
-You will need to push confirmation buttons on your Ledger device a few times
-during the installation process and re-enter your PIN code near the end of the
-process. You should finally see the Mavryk logo appear on the screen.
+| Device    | build dir | Target ID    |
+|-----------|-----------|--------------|
+| Nano S    | nanos     | 0x31100004   |
+| Nano S+   | nanos2    | 0x33100004   |
+| Nano X    | nanox     | 0x33000004   |
+| Stax      | stax      | 0x33200004   |
+| Flex      | flex      | 0x33300004   |
 
-If you see the "Generated random root public key" message and then something
-that looks like this:
+When prompted on the device, navigate to **Allow unsafe manager** and confirm,
+then confirm **Install app Mavryk Baking**.
 
-```
-Traceback (most recent call last):
-File "/usr/lib/python3.6/runpy.py", line 193, in _run_module_as_main
-<...more file names...>
-OSError: open failed
-```
+> **Note:** The device will display "This app is not genuine" every time the
+> baking app is opened. This is expected behaviour: the baking app uses the
+> `GLOBAL_PIN` security flag, which grants access to the device's PIN
+> validation. The firmware deliberately warns on every open for apps with this
+> privilege. Press the right button to open the app anyway.
 
-the most likely cause is that your `udev` rules are not set up correctly, or you
-did not unplug your Ledger hardware wallet between setting up the rules and attempting to
-install. Please confirm the correctness of your `udev` rules.
-
-To load a new version of the Mavryk application onto the Ledger device in the future,
-you can run the command again, and it will automatically remove any
-previously-loaded version.
+> **Note:** The baking app uses the `GLOBAL_PIN` security flag. When you exit
+> the baking app, the device will lock and require your PIN to return to the
+> dashboard. This is intentional security behaviour.
 
 ### Removing Your App
 
-If you'd like to remove your app, you can do this. In the virtualenv
-described in the last sections, run this command:
-
 ```
-$ python -m ledgerblue.deleteApp --targetId 0x31100004 --appName 'Mavryk Baking'
+$ ledgerctl delete "Mavryk Baking"
 ```
-
-Replace the `appName` parameter "Mavryk" with whatever application name you used when you loaded the application onto the device.
 
 Then follow the prompts on the Ledger device screen.
 

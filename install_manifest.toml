@@ -1,0 +1,12 @@
+name = "Mavryk Baking"
+version = "1.0.0"
+
+# Nano S+ (target_id = 0x33100004)
+[0x33100004]
+binary = "build/nanos2/bin/app.hex"
+icon = "glyphs/mavryk.gif"
+flags = "0x40"
+
+[0x33100004.derivationPath]
+curves = ["secp256k1", "prime256v1", "ed25519"]
+paths = ["44'/1969'"]
