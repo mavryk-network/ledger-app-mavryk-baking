@@ -20,7 +20,7 @@ the data will depend on which instruction is being used.
 
 Here is an example of an APDU message:
 
-> 0x8001000011048000002c800006c18000000080000000
+> 0x8001000011048000002c800007b18000000080000000
 
 This parses as:
 
@@ -31,7 +31,7 @@ This parses as:
 | *P1*    | `0x00`                                 |
 | *P2*    | `0x00`                                 |
 | *LC*    | `0x11` (17)                            |
-| *CDATA* | `0x048000002c800006c18000000080000000` |
+| *CDATA* | `0x048000002c800007b18000000080000000` |
 
 0x01 is the first instruction and is used for "authorize baking". This
 APDU tells the ledger to save the choice of curve and derivation path
@@ -53,6 +53,7 @@ baking.
 | `EXC_SECURITY`                  | 0x6982 | Security condition not satisfied.               |
 | `EXC_CLASS`                     | 0x6E00 | Class not supported.                            |
 | `EXC_MEMORY_ERROR`              | 0x9200 | Memory error.                                   |
+| `EXC_UNKNOWN_CX_ERR`           | 0x9001 | Unknown cryptographic error.                    |
 
 ## Instructions
 
@@ -152,7 +153,7 @@ This instruction is not allowed for permissionless legacy comm in browser.
 
 | *CLA*  | *INS*  | *P1*   | *P2* |
 |--------|--------|--------|------|
-| `0x80` | `0x02` | `0x00` | `P2` |
+| `0x80` | `0x03` | `0x00` | `P2` |
 
 Requests to get the public key according to the `path` and `P2`.
 
@@ -430,7 +431,7 @@ fixed message signed by the key associated with the `path` and `P2`.
 
 | *CLA*  | *INS*  | *P1* | *P2* |
 |--------|--------|------|------|
-| `0x80` | `0x0e` | `__` | `__` |
+| `0x80` | `0x0f` | `__` | `__` |
 
 Runs in the same way as `SIGN` except that the value returned, when *P1* is `0x01` or `0x81`, also contains the hash of the signed operation.
 
